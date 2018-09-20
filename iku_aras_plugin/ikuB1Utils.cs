@@ -356,10 +356,48 @@ namespace iku_aras_plugin
             ISheet sheet1;
             sheet1 = hssfworkbook.GetSheet("B1 Form");
 
-            int colIndex = 4;
-            int yearStart = 4;
-            int countryStart = 4;
-            int programeStart = 4;
+            int startColIndex = 4;
+            
+    
+            string v1 = sheet1.GetRow(0).GetCell(5).ToString();
+            string v2 = sheet1.GetRow(0).GetCell(6).ToString();
+            if (v1.Trim() != "")
+            {
+                startColIndex = int.Parse(v1)-1;
+            }
+
+            int colIndex = startColIndex;
+            v2 = v2.Replace("，", ",");
+            string[] v3 = v2.Split(',');
+
+            int PGRow = 8;
+            int CGRow = 9;
+            int MYRow = 10;
+            int UMDRow = 11;
+            int PRow = 12;
+            int mixRow = 13;
+            int CRow = 14;
+            int noteRow = 15;
+            int inputRow = 17;//此处不是Index
+
+
+            if (v3.Length == 9)
+            {
+                PGRow = int.Parse(v3[0]) - 1 ;
+                CGRow = int.Parse(v3[1]) - 1;
+                MYRow = int.Parse(v3[2]) - 1; 
+                UMDRow = int.Parse(v3[3]) - 1;
+                PRow = int.Parse(v3[4]) - 1;
+                mixRow = int.Parse(v3[5]) - 1;
+                CRow = int.Parse(v3[6]) - 1;
+                noteRow = int.Parse(v3[7]) - 1;
+                inputRow = int.Parse(v3[8]);//此处不是Index
+
+            }
+
+            int yearStart = colIndex;
+            int countryStart = colIndex;
+            int programeStart = colIndex;
 
             ICellStyle titleStyle = ikuNPOIUtils.currentStyle("title", hssfworkbook);
             ICellStyle style1 = ikuNPOIUtils.currentStyle("note", hssfworkbook);
@@ -397,38 +435,38 @@ namespace iku_aras_plugin
                             {
                                 ModelLine ml = modelline[n];
 
-                                sheet1.AddMergedRegion(new CellRangeAddress(11, 11, colIndex, colIndex + 1));
-                                sheet1.GetRow(11).CreateCell(colIndex).SetCellValue(ml.UMD);
-                                sheet1.GetRow(11).GetCell(colIndex).CellStyle = titleStyle;
-                                sheet1.GetRow(11).CreateCell(colIndex + 1).CellStyle = titleStyle;
+                                sheet1.AddMergedRegion(new CellRangeAddress(UMDRow, UMDRow, colIndex, colIndex + 1));
+                                sheet1.GetRow(UMDRow).CreateCell(colIndex).SetCellValue(ml.UMD);
+                                sheet1.GetRow(UMDRow).GetCell(colIndex).CellStyle = titleStyle;
+                                sheet1.GetRow(UMDRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
 
-                                sheet1.AddMergedRegion(new CellRangeAddress(12, 12, colIndex, colIndex + 1));
-                                sheet1.GetRow(12).CreateCell(colIndex).SetCellValue(ml.Package);
-                                sheet1.GetRow(12).GetCell(colIndex).CellStyle = titleStyle;
-                                sheet1.GetRow(12).CreateCell(colIndex + 1).CellStyle = titleStyle;
-
-
-                                sheet1.AddMergedRegion(new CellRangeAddress(13, 13, colIndex, colIndex + 1));
-                                sheet1.GetRow(13).CreateCell(colIndex).SetCellValue(ml.Mix+"%");
-                                sheet1.GetRow(13).GetCell(colIndex).CellStyle = titleStyle;
-                                sheet1.GetRow(13).CreateCell(colIndex + 1).CellStyle = titleStyle;
-
-                                sheet1.AddMergedRegion(new CellRangeAddress(14, 14, colIndex, colIndex + 1));
-                                sheet1.GetRow(14).CreateCell(colIndex).SetCellValue("");
-                                sheet1.GetRow(14).GetCell(colIndex).CellStyle = titleStyle;
-                                sheet1.GetRow(14).CreateCell(colIndex + 1).CellStyle = titleStyle;
+                                sheet1.AddMergedRegion(new CellRangeAddress(PRow, PRow, colIndex, colIndex + 1));
+                                sheet1.GetRow(PRow).CreateCell(colIndex).SetCellValue(ml.Package);
+                                sheet1.GetRow(PRow).GetCell(colIndex).CellStyle = titleStyle;
+                                sheet1.GetRow(PRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
 
 
-                                sheet1.GetRow(15).CreateCell(colIndex).SetCellValue("mix");
-                                sheet1.GetRow(15).GetCell(colIndex).CellStyle = style1;
-                                sheet1.GetRow(15).CreateCell(colIndex + 1).SetCellValue("QPU");
-                                sheet1.GetRow(15).GetCell(colIndex + 1).CellStyle = style1;
+                                sheet1.AddMergedRegion(new CellRangeAddress(mixRow, mixRow, colIndex, colIndex + 1));
+                                sheet1.GetRow(mixRow).CreateCell(colIndex).SetCellValue(ml.Mix+"%");
+                                sheet1.GetRow(mixRow).GetCell(colIndex).CellStyle = titleStyle;
+                                sheet1.GetRow(mixRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+
+                                sheet1.AddMergedRegion(new CellRangeAddress(CRow, CRow, colIndex, colIndex + 1));
+                                sheet1.GetRow(CRow).CreateCell(colIndex).SetCellValue("");
+                                sheet1.GetRow(CRow).GetCell(colIndex).CellStyle = titleStyle;
+                                sheet1.GetRow(CRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+
+
+                                sheet1.GetRow(noteRow).CreateCell(colIndex).SetCellValue("mix");
+                                sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
+                                sheet1.GetRow(noteRow).CreateCell(colIndex + 1).SetCellValue("QPU");
+                                sheet1.GetRow(noteRow).GetCell(colIndex + 1).CellStyle = style1;
 
                                 string colNm1 = ikuNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
                                 string colNm2 = ikuNPOIUtils.ConvertColumnIndexToColumnName(colIndex + 1);
 
-                                fn = fn + ml.PackageLCR + "*"+colNm1 + "17*" + colNm2 + "17+";
-                                stretchFn = stretchFn+ ml.StretchPackageLCR + "*" + colNm1 + "17*" + colNm2 + "17+";
+                                fn = fn + ml.PackageLCR + "*"+colNm1 + inputRow.ToString()+"*" + colNm2 + inputRow.ToString()+"+";
+                                stretchFn = stretchFn+ ml.StretchPackageLCR + "*" + colNm1 + inputRow.ToString()+"*" + colNm2 + inputRow.ToString() + "+";
 
                                 colIndex = colIndex + 2;
 
@@ -442,13 +480,13 @@ namespace iku_aras_plugin
                             yl.StretchFormula = stretchFn;
                             yearLCR.Add(yl);
 
-                            sheet1.AddMergedRegion(new CellRangeAddress(10, 10, yearStart, colIndex-1));
-                            sheet1.GetRow(10).CreateCell(yearStart).SetCellValue(my.Year);
-                            sheet1.GetRow(10).GetCell(yearStart).CellStyle = titleStyle;
+                            sheet1.AddMergedRegion(new CellRangeAddress(MYRow, MYRow, yearStart, colIndex-1));
+                            sheet1.GetRow(MYRow).CreateCell(yearStart).SetCellValue(my.Year);
+                            sheet1.GetRow(MYRow).GetCell(yearStart).CellStyle = titleStyle;
                             for (int x=yearStart+1;x< colIndex; x++)
                             {
-                                sheet1.GetRow(10).CreateCell(x);
-                                sheet1.GetRow(10).GetCell(x).CellStyle = titleStyle;
+                                sheet1.GetRow(MYRow).CreateCell(x);
+                                sheet1.GetRow(MYRow).GetCell(x).CellStyle = titleStyle;
                             }
                             
                             yearStart = colIndex;
@@ -456,25 +494,25 @@ namespace iku_aras_plugin
                         }
 
                         
-                        sheet1.AddMergedRegion(new CellRangeAddress(9, 9, countryStart, yearStart - 1));
-                        sheet1.GetRow(9).CreateCell(countryStart).SetCellValue(cg.Country);
-                        sheet1.GetRow(9).GetCell(countryStart).CellStyle = titleStyle;
+                        sheet1.AddMergedRegion(new CellRangeAddress(CGRow, CGRow, countryStart, yearStart - 1));
+                        sheet1.GetRow(CGRow).CreateCell(countryStart).SetCellValue(cg.Country);
+                        sheet1.GetRow(CGRow).GetCell(countryStart).CellStyle = titleStyle;
                         for (int y = countryStart + 1; y < yearStart; y++)
                         {
-                            sheet1.GetRow(9).CreateCell(y);
-                            sheet1.GetRow(9).GetCell(y).CellStyle = titleStyle;
+                            sheet1.GetRow(CGRow).CreateCell(y);
+                            sheet1.GetRow(CGRow).GetCell(y).CellStyle = titleStyle;
                         }
 
                         countryStart = yearStart;
                     }
 
-                    sheet1.AddMergedRegion(new CellRangeAddress(8, 8, programeStart, countryStart - 1));
-                    sheet1.GetRow(8).CreateCell(programeStart).SetCellValue(b1.Programe);
-                    sheet1.GetRow(8).GetCell(programeStart).CellStyle = titleStyle;
+                    sheet1.AddMergedRegion(new CellRangeAddress(PGRow, PGRow, programeStart, countryStart - 1));
+                    sheet1.GetRow(PGRow).CreateCell(programeStart).SetCellValue(b1.Programe);
+                    sheet1.GetRow(PGRow).GetCell(programeStart).CellStyle = titleStyle;
                     for (int z = programeStart + 1; z< countryStart; z++)
                     {
-                        sheet1.GetRow(8).CreateCell(z);
-                        sheet1.GetRow(8).GetCell(z).CellStyle = titleStyle;
+                        sheet1.GetRow(PGRow).CreateCell(z);
+                        sheet1.GetRow(PGRow).GetCell(z).CellStyle = titleStyle;
                     }
 
                     programeStart = countryStart;
@@ -486,22 +524,22 @@ namespace iku_aras_plugin
                 int myColIndex = colIndex;
    
                 ICellStyle myStyle = ikuNPOIUtils.currentStyle("modelYear", hssfworkbook);
-                sheet1.GetRow(14).CreateCell(colIndex).SetCellValue("Model Year");
+                sheet1.GetRow(CRow).CreateCell(colIndex).SetCellValue("Model Year");
                 int columnWidth = sheet1.GetColumnWidth(colIndex);
                 sheet1.SetColumnWidth(colIndex, columnWidth * 2);
-                sheet1.GetRow(14).GetCell(colIndex).CellStyle = myStyle;
-                sheet1.GetRow(15).CreateCell(colIndex);
-                sheet1.GetRow(15).GetCell(colIndex).CellStyle = style1;
+                sheet1.GetRow(CRow).GetCell(colIndex).CellStyle = myStyle;
+                sheet1.GetRow(noteRow).CreateCell(colIndex);
+                sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
                 colIndex = colIndex + 1;
 
                 for (int a = 0; a < newYearLCR.Count; a++)
                 {
-                    sheet1.GetRow(14).CreateCell(colIndex).SetCellValue(newYearLCR[a].Year );
+                    sheet1.GetRow(CRow).CreateCell(colIndex).SetCellValue(newYearLCR[a].Year );
                     sheet1.SetColumnWidth(colIndex, columnWidth * 2);
-                    sheet1.GetRow(14).GetCell(colIndex).CellStyle = titleStyle;
-                    sheet1.GetRow(15).CreateCell(colIndex);
-                    sheet1.GetRow(15).GetCell(colIndex).CellStyle = style1;
-                    sheet1.GetRow(16).CreateCell(colIndex).SetCellFormula(newYearLCR[a].Formula);
+                    sheet1.GetRow(CRow).GetCell(colIndex).CellStyle = titleStyle;
+                    sheet1.GetRow(noteRow).CreateCell(colIndex);
+                    sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
+                    sheet1.GetRow(inputRow-1).CreateCell(colIndex).SetCellFormula(newYearLCR[a].Formula);
 
                     string colNm= ikuNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
                     fCol = fCol + colNm + ",";
@@ -515,12 +553,12 @@ namespace iku_aras_plugin
                 {
                     for (int b = 0; b < newYearLCR.Count; b++)
                     {
-                        sheet1.GetRow(14).CreateCell(colIndex).SetCellValue(newYearLCR[b].Year + "\n" + "stretch");
+                        sheet1.GetRow(CRow).CreateCell(colIndex).SetCellValue(newYearLCR[b].Year + "\n" + "stretch");
                         sheet1.SetColumnWidth(colIndex, columnWidth * 2);
-                        sheet1.GetRow(14).GetCell(colIndex).CellStyle = titleStyle;
-                        sheet1.GetRow(15).CreateCell(colIndex);
-                        sheet1.GetRow(15).GetCell(colIndex).CellStyle = style1;
-                        sheet1.GetRow(16).CreateCell(colIndex).SetCellFormula(newYearLCR[b].StretchFormula);
+                        sheet1.GetRow(CRow).GetCell(colIndex).CellStyle = titleStyle;
+                        sheet1.GetRow(noteRow).CreateCell(colIndex);
+                        sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
+                        sheet1.GetRow(inputRow - 1).CreateCell(colIndex).SetCellFormula(newYearLCR[b].StretchFormula);
 
                         string colNm = ikuNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
                         fCol = fCol + colNm + ",";
@@ -531,20 +569,20 @@ namespace iku_aras_plugin
               
 
 
-                sheet1.AddMergedRegion(new CellRangeAddress(13, 13, myColIndex, colIndex - 1));
-                sheet1.GetRow(13).CreateCell(myColIndex).SetCellValue("LCR");
-                sheet1.GetRow(13).GetCell(myColIndex).CellStyle = titleStyle;
+                sheet1.AddMergedRegion(new CellRangeAddress(mixRow, mixRow, myColIndex, colIndex - 1));
+                sheet1.GetRow(mixRow).CreateCell(myColIndex).SetCellValue("LCR");
+                sheet1.GetRow(mixRow).GetCell(myColIndex).CellStyle = titleStyle;
                 for (int a = myColIndex+1; a < colIndex; a++)
                 {
-                    sheet1.GetRow(13).CreateCell(a);
-                    sheet1.GetRow(13).GetCell(a).CellStyle = titleStyle;
+                    sheet1.GetRow(mixRow).CreateCell(a);
+                    sheet1.GetRow(mixRow).GetCell(a).CellStyle = titleStyle;
                 }
 
-                for (int c = 16; c < 42; c++)
+                for (int c = inputRow-1; c < 42; c++)
                 {
-                    for (int d = 4; d < colIndex; d++)
+                    for (int d = startColIndex; d < colIndex; d++)
                     {
-                        if (c == 16 && d > myColIndex)
+                        if (c == inputRow - 1 && d > myColIndex)
                         {
                             sheet1.GetRow(c).GetCell(d).CellStyle = lcrStyle; ;
                         }
@@ -567,6 +605,9 @@ namespace iku_aras_plugin
 
                     }
                 }
+                sheet1.GetRow(0).GetCell(5).SetCellValue("");
+                sheet1.GetRow(0).GetCell(6).SetCellValue("");
+
                 fCol = fCol.Substring(0, fCol.Length - 1);
                 fCell.SetCellValue(fCol);
                 sheet1.CreateFreezePane(4, 0, 5, 0);
@@ -578,11 +619,48 @@ namespace iku_aras_plugin
         {
             ISheet sheet1;
             sheet1 = hssfworkbook.GetSheet("B1 Form");
+            int startColIndex = 4;
 
-            int colIndex = 4;
-            int yearStart = 4;
-            int countryStart = 4;
-            int programeStart = 4;
+
+            string v1 = sheet1.GetRow(0).GetCell(5).ToString();
+            string v2 = sheet1.GetRow(0).GetCell(6).ToString();
+            if (v1.Trim() != "")
+            {
+                startColIndex = int.Parse(v1) - 1;
+            }
+
+            int colIndex = startColIndex;
+            v2 = v2.Replace("，", ",");
+            string[] v3 = v2.Split(',');
+
+            int PGRow = 8;
+            int CGRow = 9;
+            int MYRow = 10;
+            int UMDRow = 11;
+            int PRow = 12;
+            int mixRow = 13;
+            int CRow = 14;
+            int noteRow = 15;
+            int inputRow = 17;//此处不是Index
+
+
+            if (v3.Length == CGRow)
+            {
+                PGRow = int.Parse(v3[0]) - 1;
+                CGRow = int.Parse(v3[1]) - 1;
+                MYRow = int.Parse(v3[2]) - 1;
+                UMDRow = int.Parse(v3[3]) - 1;
+                PRow = int.Parse(v3[4]) - 1;
+                mixRow = int.Parse(v3[5]) - 1;
+                CRow = int.Parse(v3[6]) - 1;
+                noteRow = int.Parse(v3[7]) - 1;
+                inputRow = int.Parse(v3[PGRow]);//此处不是Index
+
+            }
+
+            int yearStart = colIndex;
+            int countryStart = colIndex;
+            int programeStart = colIndex;
 
             ICellStyle titleStyle = ikuNPOIUtils.currentStyle("title", hssfworkbook);
             ICellStyle mStyle = ikuNPOIUtils.currentStyle("mix", hssfworkbook);
@@ -611,7 +689,7 @@ namespace iku_aras_plugin
             {
                 for (int i = 0; i < b1Content.Count; i++)
                 {
-                    if (ExportCount(b1Content[i]) >1)
+                    if (ExportCount(b1Content[i]) > 1)
                     {
                         exportB1.Add(b1Content[i]);
                     }
@@ -620,7 +698,7 @@ namespace iku_aras_plugin
                         localB1.Add(b1Content[i]);
                     }
                 }
-                
+
                 if (localB1.Count > 0)
                 {
                     for (int i = 0; i < localB1.Count; i++)
@@ -643,41 +721,41 @@ namespace iku_aras_plugin
                                 {
                                     ModelLine ml = modelline[n];
 
-                                    sheet1.AddMergedRegion(new CellRangeAddress(11, 11, colIndex, colIndex + 1));
-                                    sheet1.GetRow(11).CreateCell(colIndex).SetCellValue(ml.UMD);
-                                    sheet1.GetRow(11).GetCell(colIndex).CellStyle = titleStyle;
-                                    sheet1.GetRow(11).CreateCell(colIndex + 1).CellStyle = titleStyle;
+                                    sheet1.AddMergedRegion(new CellRangeAddress(UMDRow, UMDRow, colIndex, colIndex + 1));
+                                    sheet1.GetRow(UMDRow).CreateCell(colIndex).SetCellValue(ml.UMD);
+                                    sheet1.GetRow(UMDRow).GetCell(colIndex).CellStyle = titleStyle;
+                                    sheet1.GetRow(UMDRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
 
-                                    sheet1.AddMergedRegion(new CellRangeAddress(12, 12, colIndex, colIndex + 1));
-                                    sheet1.GetRow(12).CreateCell(colIndex).SetCellValue(ml.Package);
-                                    sheet1.GetRow(12).GetCell(colIndex).CellStyle = titleStyle;
-                                    sheet1.GetRow(12).CreateCell(colIndex + 1).CellStyle = titleStyle;
-
-
-                                    sheet1.AddMergedRegion(new CellRangeAddress(13, 13, colIndex, colIndex + 1));
-                                    sheet1.GetRow(13).CreateCell(colIndex).CellStyle = mStyle;
-                                    sheet1.GetRow(13).CreateCell(colIndex + 1).CellStyle = mStyle;
-                                    sheet1.GetRow(13).GetCell(colIndex).SetCellValue(double.Parse(ml.Mix)/100);
+                                    sheet1.AddMergedRegion(new CellRangeAddress(PRow, PRow, colIndex, colIndex + 1));
+                                    sheet1.GetRow(PRow).CreateCell(colIndex).SetCellValue(ml.Package);
+                                    sheet1.GetRow(PRow).GetCell(colIndex).CellStyle = titleStyle;
+                                    sheet1.GetRow(PRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
 
 
-                                    sheet1.AddMergedRegion(new CellRangeAddress(14, 14, colIndex, colIndex + 1));
-                                    sheet1.GetRow(14).CreateCell(colIndex).SetCellValue("");
-                                    sheet1.GetRow(14).GetCell(colIndex).CellStyle = titleStyle;
-                                    sheet1.GetRow(14).CreateCell(colIndex + 1).CellStyle = titleStyle;
+                                    sheet1.AddMergedRegion(new CellRangeAddress(mixRow, mixRow, colIndex, colIndex + 1));
+                                    sheet1.GetRow(mixRow).CreateCell(colIndex).CellStyle = mStyle;
+                                    sheet1.GetRow(mixRow).CreateCell(colIndex + 1).CellStyle = mStyle;
+                                    sheet1.GetRow(mixRow).GetCell(colIndex).SetCellValue(double.Parse(ml.Mix) / 100);
 
-                                //    sheet1.AddMergedRegion(new CellRangeAddress(15, 15, colIndex, colIndex + 1));
-                                    sheet1.GetRow(15).CreateCell(colIndex).SetCellValue("mix");
-                                    sheet1.GetRow(15).GetCell(colIndex).CellStyle = style1;
+
+                                    sheet1.AddMergedRegion(new CellRangeAddress(CRow, CRow, colIndex, colIndex + 1));
+                                    sheet1.GetRow(CRow).CreateCell(colIndex).SetCellValue("");
+                                    sheet1.GetRow(CRow).GetCell(colIndex).CellStyle = titleStyle;
+                                    sheet1.GetRow(CRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+
+                                    //    sheet1.AddMergedRegion(new CellRangeAddress(noteRow, noteRow, colIndex, colIndex + 1));
+                                    sheet1.GetRow(noteRow).CreateCell(colIndex).SetCellValue("mix");
+                                    sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
                                     mixCols.Add(colIndex);
-                                    sheet1.GetRow(15).CreateCell(colIndex + 1).SetCellValue("QPU");
-                                    sheet1.GetRow(15).GetCell(colIndex + 1).CellStyle = style1;
+                                    sheet1.GetRow(noteRow).CreateCell(colIndex + 1).SetCellValue("QPU");
+                                    sheet1.GetRow(noteRow).GetCell(colIndex + 1).CellStyle = style1;
                                     QPUCols.Add(colIndex + 1);
 
                                     string colNm1 = ikuNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
                                     string colNm2 = ikuNPOIUtils.ConvertColumnIndexToColumnName(colIndex + 1);
 
-                                    fn = fn + ml.PackageLCR + "*" + colNm1 + "17*" + colNm2 + "17+";
-                                    stretchFn = stretchFn + ml.StretchPackageLCR + "*" + colNm1 + "17*" + colNm2 + "17+";
+                                    fn = fn + ml.PackageLCR + "*" + colNm1 + inputRow.ToString() + "*" + colNm2 + inputRow.ToString() + "+";
+                                    stretchFn = stretchFn + ml.StretchPackageLCR + "*" + colNm1 + inputRow.ToString() + "*" + colNm2 + inputRow.ToString() + "+";
 
                                     colIndex = colIndex + 2;
 
@@ -691,13 +769,13 @@ namespace iku_aras_plugin
                                 yl.StretchFormula = stretchFn;
                                 yearLCR.Add(yl);
 
-                                sheet1.AddMergedRegion(new CellRangeAddress(10, 10, yearStart, colIndex - 1));
-                                sheet1.GetRow(10).CreateCell(yearStart).SetCellValue(my.Year);
-                                sheet1.GetRow(10).GetCell(yearStart).CellStyle = titleStyle;
+                                sheet1.AddMergedRegion(new CellRangeAddress(MYRow, MYRow, yearStart, colIndex - 1));
+                                sheet1.GetRow(MYRow).CreateCell(yearStart).SetCellValue(my.Year);
+                                sheet1.GetRow(MYRow).GetCell(yearStart).CellStyle = titleStyle;
                                 for (int x = yearStart + 1; x < colIndex; x++)
                                 {
-                                    sheet1.GetRow(10).CreateCell(x);
-                                    sheet1.GetRow(10).GetCell(x).CellStyle = titleStyle;
+                                    sheet1.GetRow(MYRow).CreateCell(x);
+                                    sheet1.GetRow(MYRow).GetCell(x).CellStyle = titleStyle;
                                 }
 
                                 yearStart = colIndex;
@@ -705,25 +783,25 @@ namespace iku_aras_plugin
                             }
 
 
-                            sheet1.AddMergedRegion(new CellRangeAddress(9, 9, countryStart, yearStart - 1));
-                            sheet1.GetRow(9).CreateCell(countryStart).SetCellValue(cg.Country);
-                            sheet1.GetRow(9).GetCell(countryStart).CellStyle = titleStyle;
+                            sheet1.AddMergedRegion(new CellRangeAddress(CGRow, CGRow, countryStart, yearStart - 1));
+                            sheet1.GetRow(CGRow).CreateCell(countryStart).SetCellValue(cg.Country);
+                            sheet1.GetRow(CGRow).GetCell(countryStart).CellStyle = titleStyle;
                             for (int y = countryStart + 1; y < yearStart; y++)
                             {
-                                sheet1.GetRow(9).CreateCell(y);
-                                sheet1.GetRow(9).GetCell(y).CellStyle = titleStyle;
+                                sheet1.GetRow(CGRow).CreateCell(y);
+                                sheet1.GetRow(CGRow).GetCell(y).CellStyle = titleStyle;
                             }
 
                             countryStart = yearStart;
                         }
 
-                        sheet1.AddMergedRegion(new CellRangeAddress(8, 8, programeStart, countryStart - 1));
-                        sheet1.GetRow(8).CreateCell(programeStart).SetCellValue(b1.Programe);
-                        sheet1.GetRow(8).GetCell(programeStart).CellStyle = titleStyle;
+                        sheet1.AddMergedRegion(new CellRangeAddress(PGRow, PGRow, programeStart, countryStart - 1));
+                        sheet1.GetRow(PGRow).CreateCell(programeStart).SetCellValue(b1.Programe);
+                        sheet1.GetRow(PGRow).GetCell(programeStart).CellStyle = titleStyle;
                         for (int z = programeStart + 1; z < countryStart; z++)
                         {
-                            sheet1.GetRow(8).CreateCell(z);
-                            sheet1.GetRow(8).GetCell(z).CellStyle = titleStyle;
+                            sheet1.GetRow(PGRow).CreateCell(z);
+                            sheet1.GetRow(PGRow).GetCell(z).CellStyle = titleStyle;
                         }
 
                         programeStart = countryStart;
@@ -745,7 +823,7 @@ namespace iku_aras_plugin
                         {
                             ModelYear my = myList[m];
                             List<ModelLine> modelline = my.ModelLine;
-                          //  YearLCR yl = new YearLCR(my.Year);
+                            //  YearLCR yl = new YearLCR(my.Year);
                             //string fn = "SUM(";
                             //string stretchFn = "SUM(";
 
@@ -758,7 +836,7 @@ namespace iku_aras_plugin
                                 em.Package = ml.Package;
                                 em.ColIndex = colIndex;
                                 em.Formula = "";
-                                em.Year  = my.Year;
+                                em.Year = my.Year;
                                 exportCols.Add(colIndex);
 
                                 emList.Add(em);
@@ -766,25 +844,25 @@ namespace iku_aras_plugin
                                 int colWidth = sheet1.GetColumnWidth(colIndex);
                                 sheet1.SetColumnWidth(colIndex, colWidth * 2);
 
-                                sheet1.GetRow(11).CreateCell(colIndex).SetCellValue(ml.UMD);
-                                sheet1.GetRow(11).GetCell(colIndex).CellStyle = titleStyle;
-                                //sheet1.GetRow(11).CreateCell(colIndex + 1).CellStyle = titleStyle;
+                                sheet1.GetRow(UMDRow).CreateCell(colIndex).SetCellValue(ml.UMD);
+                                sheet1.GetRow(UMDRow).GetCell(colIndex).CellStyle = titleStyle;
+                                //sheet1.GetRow(UMDRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
 
-                                sheet1.GetRow(12).CreateCell(colIndex).SetCellValue(ml.Package);
-                                sheet1.GetRow(12).GetCell(colIndex).CellStyle = titleStyle;
-                                //sheet1.GetRow(12).CreateCell(colIndex + 1).CellStyle = titleStyle;
+                                sheet1.GetRow(PRow).CreateCell(colIndex).SetCellValue(ml.Package);
+                                sheet1.GetRow(PRow).GetCell(colIndex).CellStyle = titleStyle;
+                                //sheet1.GetRow(PRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
 
-                                sheet1.GetRow(13).CreateCell(colIndex).CellStyle = mStyle;
-                                //sheet1.GetRow(13).CreateCell(colIndex + 1).CellStyle = mStyle;
-                                sheet1.GetRow(13).GetCell(colIndex).SetCellValue(double.Parse(ml.Mix)/100);
+                                sheet1.GetRow(mixRow).CreateCell(colIndex).CellStyle = mStyle;
+                                //sheet1.GetRow(mixRow).CreateCell(colIndex + 1).CellStyle = mStyle;
+                                sheet1.GetRow(mixRow).GetCell(colIndex).SetCellValue(double.Parse(ml.Mix) / 100);
 
-                                sheet1.GetRow(14).CreateCell(colIndex).SetCellValue("");
-                                sheet1.GetRow(14).GetCell(colIndex).CellStyle = titleStyle;
-                                //sheet1.GetRow(14).CreateCell(colIndex + 1).CellStyle = titleStyle;
+                                sheet1.GetRow(CRow).CreateCell(colIndex).SetCellValue("");
+                                sheet1.GetRow(CRow).GetCell(colIndex).CellStyle = titleStyle;
+                                //sheet1.GetRow(CRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
 
-                                sheet1.GetRow(15).CreateCell(colIndex).SetCellValue("QPU");
-                                sheet1.GetRow(15).GetCell(colIndex).CellStyle = style1;
-                                //sheet1.GetRow(15).CreateCell(colIndex + 1).CellStyle = style1;
+                                sheet1.GetRow(noteRow).CreateCell(colIndex).SetCellValue("QPU");
+                                sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
+                                //sheet1.GetRow(noteRow).CreateCell(colIndex + 1).CellStyle = style1;
 
                                 string colNm1 = ikuNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
                                 //string colNm2 = ikuNPOIUtils.ConvertColumnIndexToColumnName(colIndex + 1);
@@ -804,31 +882,31 @@ namespace iku_aras_plugin
                             //yl.StretchFormula = stretchFn;
                             //yearLCR.Add(yl);
 
-                            sheet1.AddMergedRegion(new CellRangeAddress(10, 10, yearStart, colIndex - 1));
-                            sheet1.GetRow(10).CreateCell(yearStart).SetCellValue(my.Year);
-                            sheet1.GetRow(10).GetCell(yearStart).CellStyle = titleStyle;
+                            sheet1.AddMergedRegion(new CellRangeAddress(MYRow, MYRow, yearStart, colIndex - 1));
+                            sheet1.GetRow(MYRow).CreateCell(yearStart).SetCellValue(my.Year);
+                            sheet1.GetRow(MYRow).GetCell(yearStart).CellStyle = titleStyle;
                             for (int x = yearStart + 1; x < colIndex; x++)
                             {
-                                sheet1.GetRow(10).CreateCell(x);
-                                sheet1.GetRow(10).GetCell(x).CellStyle = titleStyle;
+                                sheet1.GetRow(MYRow).CreateCell(x);
+                                sheet1.GetRow(MYRow).GetCell(x).CellStyle = titleStyle;
                             }
 
                             yearStart = colIndex;
 
                         }
-                        sheet1.AddMergedRegion(new CellRangeAddress(9, 9, countryStart, yearStart - 1));
-                        sheet1.GetRow(9).CreateCell(countryStart).SetCellValue("出口综合版");
-                        sheet1.GetRow(9).GetCell(countryStart).CellStyle = titleStyle;
+                        sheet1.AddMergedRegion(new CellRangeAddress(CGRow, CGRow, countryStart, yearStart - 1));
+                        sheet1.GetRow(CGRow).CreateCell(countryStart).SetCellValue("出口综合版");
+                        sheet1.GetRow(CGRow).GetCell(countryStart).CellStyle = titleStyle;
                         for (int y = countryStart + 1; y < yearStart; y++)
                         {
-                            sheet1.GetRow(9).CreateCell(y);
-                            sheet1.GetRow(9).GetCell(y).CellStyle = titleStyle;
+                            sheet1.GetRow(CGRow).CreateCell(y);
+                            sheet1.GetRow(CGRow).GetCell(y).CellStyle = titleStyle;
                         }
 
                         countryStart = yearStart;
 
                         //========以下是出口正常输出的部分
-                     
+
                         List<CountryGroup> countrygroup = b1.CountryGroup;
                         for (int j = 0; j < countrygroup.Count; j++)
                         {
@@ -847,49 +925,49 @@ namespace iku_aras_plugin
                                     ModelLine ml = modelline[n];
 
                                     ExportModel EM = emList.Find(s => s.Year == my.Year && s.Package == ml.Package);
-                   //                 MessageBox.Show("the year: "+ EM.Year+" and Package: "+ EM.Package +" ColIndex is "+EM.ColIndex );
+                                    //                 MessageBox.Show("the year: "+ EM.Year+" and Package: "+ EM.Package +" ColIndex is "+EM.ColIndex );
 
-                                    sheet1.AddMergedRegion(new CellRangeAddress(11, 11, colIndex, colIndex + 1));
-                                    sheet1.GetRow(11).CreateCell(colIndex).SetCellValue(ml.UMD);
-                                    sheet1.GetRow(11).GetCell(colIndex).CellStyle = titleStyle;
-                                    sheet1.GetRow(11).CreateCell(colIndex + 1).CellStyle = titleStyle;
+                                    sheet1.AddMergedRegion(new CellRangeAddress(UMDRow, UMDRow, colIndex, colIndex + 1));
+                                    sheet1.GetRow(UMDRow).CreateCell(colIndex).SetCellValue(ml.UMD);
+                                    sheet1.GetRow(UMDRow).GetCell(colIndex).CellStyle = titleStyle;
+                                    sheet1.GetRow(UMDRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
 
-                                    sheet1.AddMergedRegion(new CellRangeAddress(12, 12, colIndex, colIndex + 1));
-                                    sheet1.GetRow(12).CreateCell(colIndex).SetCellValue(ml.Package);
-                                    sheet1.GetRow(12).GetCell(colIndex).CellStyle = titleStyle;
-                                    sheet1.GetRow(12).CreateCell(colIndex + 1).CellStyle = titleStyle;
-
-
-                                    sheet1.AddMergedRegion(new CellRangeAddress(13, 13, colIndex, colIndex + 1));
-                                    sheet1.GetRow(13).CreateCell(colIndex).CellStyle = mStyle;
-                                    sheet1.GetRow(13).CreateCell(colIndex + 1).CellStyle = mStyle;
-                                    sheet1.GetRow(13).GetCell(colIndex).SetCellValue(double.Parse(ml.Mix) / 100);
+                                    sheet1.AddMergedRegion(new CellRangeAddress(PRow, PRow, colIndex, colIndex + 1));
+                                    sheet1.GetRow(PRow).CreateCell(colIndex).SetCellValue(ml.Package);
+                                    sheet1.GetRow(PRow).GetCell(colIndex).CellStyle = titleStyle;
+                                    sheet1.GetRow(PRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
 
 
-                                    sheet1.AddMergedRegion(new CellRangeAddress(14, 14, colIndex, colIndex + 1));
-                                    sheet1.GetRow(14).CreateCell(colIndex).SetCellValue("");
-                                    sheet1.GetRow(14).GetCell(colIndex).CellStyle = titleStyle;
-                                    sheet1.GetRow(14).CreateCell(colIndex + 1).CellStyle = titleStyle;
+                                    sheet1.AddMergedRegion(new CellRangeAddress(mixRow, mixRow, colIndex, colIndex + 1));
+                                    sheet1.GetRow(mixRow).CreateCell(colIndex).CellStyle = mStyle;
+                                    sheet1.GetRow(mixRow).CreateCell(colIndex + 1).CellStyle = mStyle;
+                                    sheet1.GetRow(mixRow).GetCell(colIndex).SetCellValue(double.Parse(ml.Mix) / 100);
 
-                         //           sheet1.AddMergedRegion(new CellRangeAddress(15, 15, colIndex, colIndex + 1));
-                                    sheet1.GetRow(15).CreateCell(colIndex).SetCellValue("mix");
+
+                                    sheet1.AddMergedRegion(new CellRangeAddress(CRow, CRow, colIndex, colIndex + 1));
+                                    sheet1.GetRow(CRow).CreateCell(colIndex).SetCellValue("");
+                                    sheet1.GetRow(CRow).GetCell(colIndex).CellStyle = titleStyle;
+                                    sheet1.GetRow(CRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+
+                                    //           sheet1.AddMergedRegion(new CellRangeAddress(noteRow, noteRow, colIndex, colIndex + 1));
+                                    sheet1.GetRow(noteRow).CreateCell(colIndex).SetCellValue("mix");
                                     mixCols.Add(colIndex);
-                                    sheet1.GetRow(15).GetCell(colIndex).CellStyle = style1;
-                                    sheet1.GetRow(15).CreateCell(colIndex + 1).SetCellValue("QPU");
-                                    QPUCols.Add(colIndex+1);
-                                    sheet1.GetRow(15).GetCell(colIndex + 1).CellStyle = style1;
+                                    sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
+                                    sheet1.GetRow(noteRow).CreateCell(colIndex + 1).SetCellValue("QPU");
+                                    QPUCols.Add(colIndex + 1);
+                                    sheet1.GetRow(noteRow).GetCell(colIndex + 1).CellStyle = style1;
 
                                     string colNm1 = ikuNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
                                     string colNm2 = ikuNPOIUtils.ConvertColumnIndexToColumnName(colIndex + 1);
 
                                     string exportFn = EM.Formula;
 
-                                    exportFn= exportFn+ ml.PackageLCR + "*" + colNm1 + "17*" + colNm2 + "17+";
+                                    exportFn = exportFn + ml.PackageLCR + "*" + colNm1 + inputRow.ToString() + "*" + colNm2 + inputRow.ToString() + "+";
 
                                     EM.Formula = exportFn;
 
-                                    fn = fn + ml.PackageLCR + "*" + colNm1 + "17*" + colNm2 + "17+";
-                                    stretchFn = stretchFn + ml.StretchPackageLCR + "*" + colNm1 + "17*" + colNm2 + "17+";
+                                    fn = fn + ml.PackageLCR + "*" + colNm1 + inputRow.ToString() + "*" + colNm2 + inputRow.ToString() + "+";
+                                    stretchFn = stretchFn + ml.StretchPackageLCR + "*" + colNm1 + inputRow.ToString() + "*" + colNm2 + inputRow.ToString() + "+";
 
                                     colIndex = colIndex + 2;
 
@@ -903,13 +981,13 @@ namespace iku_aras_plugin
                                 yl.StretchFormula = stretchFn;
                                 yearLCR.Add(yl);
 
-                                sheet1.AddMergedRegion(new CellRangeAddress(10, 10, yearStart, colIndex - 1));
-                                sheet1.GetRow(10).CreateCell(yearStart).SetCellValue(my.Year);
-                                sheet1.GetRow(10).GetCell(yearStart).CellStyle = titleStyle;
+                                sheet1.AddMergedRegion(new CellRangeAddress(MYRow, MYRow, yearStart, colIndex - 1));
+                                sheet1.GetRow(MYRow).CreateCell(yearStart).SetCellValue(my.Year);
+                                sheet1.GetRow(MYRow).GetCell(yearStart).CellStyle = titleStyle;
                                 for (int x = yearStart + 1; x < colIndex; x++)
                                 {
-                                    sheet1.GetRow(10).CreateCell(x);
-                                    sheet1.GetRow(10).GetCell(x).CellStyle = titleStyle;
+                                    sheet1.GetRow(MYRow).CreateCell(x);
+                                    sheet1.GetRow(MYRow).GetCell(x).CellStyle = titleStyle;
                                 }
 
                                 yearStart = colIndex;
@@ -917,30 +995,30 @@ namespace iku_aras_plugin
                             }
 
 
-                            sheet1.AddMergedRegion(new CellRangeAddress(9, 9, countryStart, yearStart - 1));
-                            sheet1.GetRow(9).CreateCell(countryStart).SetCellValue(cg.Country);
-                            sheet1.GetRow(9).GetCell(countryStart).CellStyle = titleStyle;
+                            sheet1.AddMergedRegion(new CellRangeAddress(CGRow, CGRow, countryStart, yearStart - 1));
+                            sheet1.GetRow(CGRow).CreateCell(countryStart).SetCellValue(cg.Country);
+                            sheet1.GetRow(CGRow).GetCell(countryStart).CellStyle = titleStyle;
                             for (int y = countryStart + 1; y < yearStart; y++)
                             {
-                                sheet1.GetRow(9).CreateCell(y);
-                                sheet1.GetRow(9).GetCell(y).CellStyle = titleStyle;
+                                sheet1.GetRow(CGRow).CreateCell(y);
+                                sheet1.GetRow(CGRow).GetCell(y).CellStyle = titleStyle;
                             }
 
                             countryStart = yearStart;
                         }
 
-                        sheet1.AddMergedRegion(new CellRangeAddress(8, 8, programeStart, countryStart - 1));
-                        sheet1.GetRow(8).CreateCell(programeStart).SetCellValue(b1.Programe + "-Export");
-                        sheet1.GetRow(8).GetCell(programeStart).CellStyle = titleStyle;
+                        sheet1.AddMergedRegion(new CellRangeAddress(PGRow, PGRow, programeStart, countryStart - 1));
+                        sheet1.GetRow(PGRow).CreateCell(programeStart).SetCellValue(b1.Programe + "-Export");
+                        sheet1.GetRow(PGRow).GetCell(programeStart).CellStyle = titleStyle;
                         for (int z = programeStart + 1; z < countryStart; z++)
                         {
-                            sheet1.GetRow(8).CreateCell(z);
-                            sheet1.GetRow(8).GetCell(z).CellStyle = titleStyle;
+                            sheet1.GetRow(PGRow).CreateCell(z);
+                            sheet1.GetRow(PGRow).GetCell(z).CellStyle = titleStyle;
                         }
 
                         programeStart = countryStart;
 
-                        for (int j=0;j<emList.Count;j++)
+                        for (int j = 0; j < emList.Count; j++)
                         {
                             ExportModel em = emList[j];
                             string year = em.Year;
@@ -970,21 +1048,21 @@ namespace iku_aras_plugin
                 int myColIndex = colIndex;
 
                 ICellStyle myStyle = ikuNPOIUtils.currentStyle("modelYear", hssfworkbook);
-                sheet1.GetRow(14).CreateCell(colIndex).SetCellValue("Model Year");
+                sheet1.GetRow(CRow).CreateCell(colIndex).SetCellValue("Model Year");
                 int columnWidth = sheet1.GetColumnWidth(colIndex);
                 sheet1.SetColumnWidth(colIndex, columnWidth * 2);
-                sheet1.GetRow(14).GetCell(colIndex).CellStyle = myStyle;
-                sheet1.GetRow(15).CreateCell(colIndex);
-                sheet1.GetRow(15).GetCell(colIndex).CellStyle = style1;
+                sheet1.GetRow(CRow).GetCell(colIndex).CellStyle = myStyle;
+                sheet1.GetRow(noteRow).CreateCell(colIndex);
+                sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
                 colIndex = colIndex + 1;
 
                 for (int a = 0; a < newYearLCR.Count; a++)
                 {
-                    sheet1.GetRow(14).CreateCell(colIndex).SetCellValue(newYearLCR[a].Year);
+                    sheet1.GetRow(CRow).CreateCell(colIndex).SetCellValue(newYearLCR[a].Year);
                     sheet1.SetColumnWidth(colIndex, columnWidth * 2);
-                    sheet1.GetRow(14).GetCell(colIndex).CellStyle = titleStyle;
-                    sheet1.GetRow(15).CreateCell(colIndex);
-                    sheet1.GetRow(15).GetCell(colIndex).CellStyle = style1;
+                    sheet1.GetRow(CRow).GetCell(colIndex).CellStyle = titleStyle;
+                    sheet1.GetRow(noteRow).CreateCell(colIndex);
+                    sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
                     sheet1.GetRow(16).CreateCell(colIndex).SetCellFormula(newYearLCR[a].Formula);
 
                     string colNm = ikuNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
@@ -997,11 +1075,11 @@ namespace iku_aras_plugin
                 {
                     for (int b = 0; b < newYearLCR.Count; b++)
                     {
-                        sheet1.GetRow(14).CreateCell(colIndex).SetCellValue(newYearLCR[b].Year + "\n" + "stretch");
+                        sheet1.GetRow(CRow).CreateCell(colIndex).SetCellValue(newYearLCR[b].Year + "\n" + "stretch");
                         sheet1.SetColumnWidth(colIndex, columnWidth * 2);
-                        sheet1.GetRow(14).GetCell(colIndex).CellStyle = titleStyle;
-                        sheet1.GetRow(15).CreateCell(colIndex);
-                        sheet1.GetRow(15).GetCell(colIndex).CellStyle = style1;
+                        sheet1.GetRow(CRow).GetCell(colIndex).CellStyle = titleStyle;
+                        sheet1.GetRow(noteRow).CreateCell(colIndex);
+                        sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
                         sheet1.GetRow(16).CreateCell(colIndex).SetCellFormula(newYearLCR[b].StretchFormula);
 
                         string colNm = ikuNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
@@ -1011,49 +1089,49 @@ namespace iku_aras_plugin
                     }
                 }
 
-                sheet1.AddMergedRegion(new CellRangeAddress(13, 13, myColIndex, colIndex - 1));
-                sheet1.GetRow(13).CreateCell(myColIndex).SetCellValue("LCR");
-                sheet1.GetRow(13).GetCell(myColIndex).CellStyle = titleStyle;
+                sheet1.AddMergedRegion(new CellRangeAddress(mixRow, mixRow, myColIndex, colIndex - 1));
+                sheet1.GetRow(mixRow).CreateCell(myColIndex).SetCellValue("LCR");
+                sheet1.GetRow(mixRow).GetCell(myColIndex).CellStyle = titleStyle;
                 for (int a = myColIndex + 1; a < colIndex; a++)
                 {
-                    sheet1.GetRow(13).CreateCell(a);
-                    sheet1.GetRow(13).GetCell(a).CellStyle = titleStyle;
+                    sheet1.GetRow(mixRow).CreateCell(a);
+                    sheet1.GetRow(mixRow).GetCell(a).CellStyle = titleStyle;
                 }
 
                 //MessageBox.Show("colIndex is :" + colIndex.ToString());
                 //MessageBox.Show("myColIndex is: "+myColIndex.ToString());
 
-                for (int c = 16; c < 42; c++)
+                for (int c = inputRow - 1; c < 42; c++)
                 {
-                    for (int d = 4; d < colIndex; d++)
+                    for (int d = startColIndex; d < colIndex; d++)
                     {
 
-                        if (c == 16 && exportCols.Exists(s=>s==d))
+                        if (c == inputRow - 1 && exportCols.Exists(s => s == d))
                         {
                             sheet1.GetRow(c).GetCell(d).CellStyle = lcrStyle;
                             continue;
                         }
-                        if (c != 16 && exportCols.Exists(s => s == d))
+                        if (c != inputRow - 1 && exportCols.Exists(s => s == d))
                         {
                             sheet1.GetRow(c).CreateCell(d).CellStyle = QPUStyle;
                             continue;
                         }
-                        if (c == 16 && d > myColIndex)
+                        if (c == inputRow - 1 && d > myColIndex)
                         {
                             sheet1.GetRow(c).GetCell(d).CellStyle = lcrStyle;
                             continue;
                         }
                         if (d > myColIndex)
                         {
-                            sheet1.GetRow(c).CreateCell(d).CellStyle = QPUStyle ;
+                            sheet1.GetRow(c).CreateCell(d).CellStyle = QPUStyle;
                             continue;
                         }
-                         if (d == myColIndex)
+                        if (d == myColIndex)
                         {
                             sheet1.GetRow(c).CreateCell(d).CellStyle = style1;
                             continue;
                         }
-                        if (mixCols.Exists(s=>s==d))
+                        if (mixCols.Exists(s => s == d))
                         {
                             sheet1.GetRow(c).CreateCell(d).CellStyle = mixStyle;
                             continue;
@@ -1066,16 +1144,17 @@ namespace iku_aras_plugin
                         }
 
 
-                        //}
-
                     }
                 }
+                sheet1.GetRow(0).GetCell(5).SetCellValue("");
+                sheet1.GetRow(0).GetCell(6).SetCellValue("");
                 fCol = fCol.Substring(0, fCol.Length - 1);
                 fCell.SetCellValue(fCol);
                 sheet1.CreateFreezePane(4, 0, 5, 0);
                 sheet1.ProtectSheet("password");//设置密码保护
             }
         }
+
 
         public List<YearLCR> splitList(List<YearLCR> yearlcr)
         {
