@@ -38,6 +38,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\SP12\Aras.Net.dll</HintPath>
     </Reference>
+    <Reference Include="InnovatorCore">
+      <HintPath>..\..\..\..\..\..\..\SP12\Aras Refs\InnovatorCore.dll</HintPath>
+    </Reference>
     <Reference Include="IOM, Version=11.0.0.6920, Culture=neutral, PublicKeyToken=524d880b05474146, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\SP12\IOM.dll</HintPath>
@@ -65,11 +68,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddIdentityToRole.cs" />
     <Compile Include="B1Content.cs" />
     <Compile Include="excel.cs" />
     <Compile Include="ikuMail.cs" />
     <Compile Include="ikuNPOIUtils.cs" />
     <Compile Include="ikuB1Utils.cs" />
+    <Compile Include="ikuUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
