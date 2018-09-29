@@ -15,7 +15,7 @@ namespace iku_aras_plugin
         public string MailSubject { get; set; }
         public string RecipientAddress { get; set; }
         public string mailFrom { get; set; }
-        public string formUser { get; set; }
+        public string fromUser { get; set; }
         public string userPassword { get; set; }
 
         public ikuMail() { }
@@ -28,7 +28,7 @@ namespace iku_aras_plugin
             this.MailSubject = IMailSubject;
             this.RecipientAddress = IRecipientAddress;
             this.mailFrom = ImailFrom;
-            this.formUser = IformUser;
+            this.fromUser = IformUser;
             this.userPassword = IuserPassword;
 
         }
@@ -41,7 +41,7 @@ namespace iku_aras_plugin
             SmtpClient.Credentials = new System.Net.NetworkCredential(mailFrom, userPassword);
 
             MailMessage MailMessage =new MailMessage(mailFrom, RecipientAddress);
-            MailMessage.From = new MailAddress(mailFrom, formUser);
+            MailMessage.From = new MailAddress(mailFrom, fromUser);
             MailMessage.Subject = MailSubject;
             MailMessage.Body = MailContent;
             MailMessage.BodyEncoding = System.Text.Encoding.UTF8;
@@ -65,7 +65,7 @@ namespace iku_aras_plugin
             SmtpClient.Credentials = new System.Net.NetworkCredential(mailFrom, userPassword);
 
             MailMessage MailMessage = new MailMessage(mailFrom, RecipientAddress);
-            MailMessage.From = new MailAddress(mailFrom, formUser);
+            MailMessage.From = new MailAddress(mailFrom, fromUser);
             MailMessage.Subject = MailSubject;
             MailMessage.Body = MailContent;
             MailMessage.BodyEncoding = System.Text.Encoding.UTF8;
