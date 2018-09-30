@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Aras.IOM;
 
-namespace iku_aras_plugin
+namespace sgm_aras_plugin
 {
     public class ModelLine
     {

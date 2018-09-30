@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Mail;
 
-namespace iku_aras_plugin
+namespace sgm_aras_plugin
 {
-    public class ikuMail
+    public class sgmMail
     {
         public string  smtpserver { get; set; }
         public string port { get; set; }
@@ -18,9 +18,9 @@ namespace iku_aras_plugin
         public string fromUser { get; set; }
         public string userPassword { get; set; }
 
-        public ikuMail() { }
+        public sgmMail() { }
 
-        public ikuMail(string Ismtpserver, string Iport, string IMailContent , string IMailSubject, string IRecipientAddress, string ImailFrom, string IformUser, string IuserPassword)
+        public sgmMail(string Ismtpserver, string Iport, string IMailContent , string IMailSubject, string IRecipientAddress, string ImailFrom, string IformUser, string IuserPassword)
         {
             this.smtpserver = Ismtpserver;
             this.port = Iport;

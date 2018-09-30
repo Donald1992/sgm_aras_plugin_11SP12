@@ -9,9 +9,9 @@ using NPOI.HSSF.Util;
 using NPOI.HSSF.UserModel;
 using NPOI.HSSF.Util;
 
-namespace iku_aras_plugin
+namespace sgm_aras_plugin
 {
-    public class ikuNPOIUtils
+    public class sgmNPOIUtils
     {
         public static ICellStyle currentStyle(string styleCase,HSSFWorkbook hssfworkbook)
         {

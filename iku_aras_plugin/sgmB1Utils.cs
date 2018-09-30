@@ -14,9 +14,9 @@ using System.IO;
 using System.Globalization;
 using System.Windows.Forms; //测试弹框
 
-namespace iku_aras_plugin
+namespace sgm_aras_plugin
 {
-    public class ikuB1Utils
+    public class sgmB1Utils
     {
 
         public List<YearLCR> yearLCR =new List<YearLCR>();
@@ -399,14 +399,14 @@ namespace iku_aras_plugin
             int countryStart = colIndex;
             int programeStart = colIndex;
 
-            ICellStyle titleStyle = ikuNPOIUtils.currentStyle("title", hssfworkbook);
-            ICellStyle style1 = ikuNPOIUtils.currentStyle("note", hssfworkbook);
+            ICellStyle titleStyle = sgmNPOIUtils.currentStyle("title", hssfworkbook);
+            ICellStyle style1 = sgmNPOIUtils.currentStyle("note", hssfworkbook);
 
 
-            ICellStyle mixStyle = ikuNPOIUtils.currentStyle("userMix", hssfworkbook);
-            ICellStyle QPUStyle = ikuNPOIUtils.currentStyle("userQPU", hssfworkbook);
-            ICellStyle lcrStyle = ikuNPOIUtils.currentStyle("lcr", hssfworkbook);
-            ICellStyle forStyle = ikuNPOIUtils.currentStyle("formula", hssfworkbook);
+            ICellStyle mixStyle = sgmNPOIUtils.currentStyle("userMix", hssfworkbook);
+            ICellStyle QPUStyle = sgmNPOIUtils.currentStyle("userQPU", hssfworkbook);
+            ICellStyle lcrStyle = sgmNPOIUtils.currentStyle("lcr", hssfworkbook);
+            ICellStyle forStyle = sgmNPOIUtils.currentStyle("formula", hssfworkbook);
 
 
             ICell fCell = sheet1.GetRow(0).CreateCell(4);
@@ -462,8 +462,8 @@ namespace iku_aras_plugin
                                 sheet1.GetRow(noteRow).CreateCell(colIndex + 1).SetCellValue("QPU");
                                 sheet1.GetRow(noteRow).GetCell(colIndex + 1).CellStyle = style1;
 
-                                string colNm1 = ikuNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
-                                string colNm2 = ikuNPOIUtils.ConvertColumnIndexToColumnName(colIndex + 1);
+                                string colNm1 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
+                                string colNm2 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex + 1);
 
                                 fn = fn + ml.PackageLCR + "*"+colNm1 + inputRow.ToString()+"*" + colNm2 + inputRow.ToString()+"+";
                                 stretchFn = stretchFn+ ml.StretchPackageLCR + "*" + colNm1 + inputRow.ToString()+"*" + colNm2 + inputRow.ToString() + "+";
@@ -523,7 +523,7 @@ namespace iku_aras_plugin
 
                 int myColIndex = colIndex;
    
-                ICellStyle myStyle = ikuNPOIUtils.currentStyle("modelYear", hssfworkbook);
+                ICellStyle myStyle = sgmNPOIUtils.currentStyle("modelYear", hssfworkbook);
                 sheet1.GetRow(CRow).CreateCell(colIndex).SetCellValue("Model Year");
                 int columnWidth = sheet1.GetColumnWidth(colIndex);
                 sheet1.SetColumnWidth(colIndex, columnWidth * 2);
@@ -541,7 +541,7 @@ namespace iku_aras_plugin
                     sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
                     sheet1.GetRow(inputRow-1).CreateCell(colIndex).SetCellFormula(newYearLCR[a].Formula);
 
-                    string colNm= ikuNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
+                    string colNm= sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
                     fCol = fCol + colNm + ",";
 
                     colIndex = colIndex + 1;
@@ -560,7 +560,7 @@ namespace iku_aras_plugin
                         sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
                         sheet1.GetRow(inputRow - 1).CreateCell(colIndex).SetCellFormula(newYearLCR[b].StretchFormula);
 
-                        string colNm = ikuNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
+                        string colNm = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
                         fCol = fCol + colNm + ",";
 
                         colIndex = colIndex + 1;
@@ -662,16 +662,16 @@ namespace iku_aras_plugin
             int countryStart = colIndex;
             int programeStart = colIndex;
 
-            ICellStyle titleStyle = ikuNPOIUtils.currentStyle("title", hssfworkbook);
-            ICellStyle mStyle = ikuNPOIUtils.currentStyle("mix", hssfworkbook);
+            ICellStyle titleStyle = sgmNPOIUtils.currentStyle("title", hssfworkbook);
+            ICellStyle mStyle = sgmNPOIUtils.currentStyle("mix", hssfworkbook);
 
-            ICellStyle style1 = ikuNPOIUtils.currentStyle("note", hssfworkbook);
+            ICellStyle style1 = sgmNPOIUtils.currentStyle("note", hssfworkbook);
 
 
-            ICellStyle mixStyle = ikuNPOIUtils.currentStyle("userMix", hssfworkbook);
-            ICellStyle QPUStyle = ikuNPOIUtils.currentStyle("userQPU", hssfworkbook);
-            ICellStyle lcrStyle = ikuNPOIUtils.currentStyle("lcr", hssfworkbook);
-            ICellStyle forStyle = ikuNPOIUtils.currentStyle("formula", hssfworkbook);
+            ICellStyle mixStyle = sgmNPOIUtils.currentStyle("userMix", hssfworkbook);
+            ICellStyle QPUStyle = sgmNPOIUtils.currentStyle("userQPU", hssfworkbook);
+            ICellStyle lcrStyle = sgmNPOIUtils.currentStyle("lcr", hssfworkbook);
+            ICellStyle forStyle = sgmNPOIUtils.currentStyle("formula", hssfworkbook);
 
             ICell fCell = sheet1.GetRow(0).CreateCell(4);
             fCell.CellStyle = forStyle;
@@ -751,8 +751,8 @@ namespace iku_aras_plugin
                                     sheet1.GetRow(noteRow).GetCell(colIndex + 1).CellStyle = style1;
                                     QPUCols.Add(colIndex + 1);
 
-                                    string colNm1 = ikuNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
-                                    string colNm2 = ikuNPOIUtils.ConvertColumnIndexToColumnName(colIndex + 1);
+                                    string colNm1 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
+                                    string colNm2 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex + 1);
 
                                     fn = fn + ml.PackageLCR + "*" + colNm1 + inputRow.ToString() + "*" + colNm2 + inputRow.ToString() + "+";
                                     stretchFn = stretchFn + ml.StretchPackageLCR + "*" + colNm1 + inputRow.ToString() + "*" + colNm2 + inputRow.ToString() + "+";
@@ -864,7 +864,7 @@ namespace iku_aras_plugin
                                 sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
                                 //sheet1.GetRow(noteRow).CreateCell(colIndex + 1).CellStyle = style1;
 
-                                string colNm1 = ikuNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
+                                string colNm1 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
                                 //string colNm2 = ikuNPOIUtils.ConvertColumnIndexToColumnName(colIndex + 1);
 
                                 //fn = fn + ml.PackageLCR + "*" + colNm1 + "17*" + colNm2 + "17+";
@@ -957,8 +957,8 @@ namespace iku_aras_plugin
                                     QPUCols.Add(colIndex + 1);
                                     sheet1.GetRow(noteRow).GetCell(colIndex + 1).CellStyle = style1;
 
-                                    string colNm1 = ikuNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
-                                    string colNm2 = ikuNPOIUtils.ConvertColumnIndexToColumnName(colIndex + 1);
+                                    string colNm1 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
+                                    string colNm2 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex + 1);
 
                                     string exportFn = EM.Formula;
 
@@ -1033,7 +1033,7 @@ namespace iku_aras_plugin
                             sheet1.GetRow(16).CreateCell(em.ColIndex).SetCellFormula(fn);
                             sheet1.GetRow(16).GetCell(em.ColIndex).CellStyle = lcrStyle;
 
-                            string colNm = ikuNPOIUtils.ConvertColumnIndexToColumnName(em.ColIndex);
+                            string colNm = sgmNPOIUtils.ConvertColumnIndexToColumnName(em.ColIndex);
                             fCol = fCol + colNm + ",";
 
                         }
@@ -1047,7 +1047,7 @@ namespace iku_aras_plugin
 
                 int myColIndex = colIndex;
 
-                ICellStyle myStyle = ikuNPOIUtils.currentStyle("modelYear", hssfworkbook);
+                ICellStyle myStyle = sgmNPOIUtils.currentStyle("modelYear", hssfworkbook);
                 sheet1.GetRow(CRow).CreateCell(colIndex).SetCellValue("Model Year");
                 int columnWidth = sheet1.GetColumnWidth(colIndex);
                 sheet1.SetColumnWidth(colIndex, columnWidth * 2);
@@ -1065,7 +1065,7 @@ namespace iku_aras_plugin
                     sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
                     sheet1.GetRow(16).CreateCell(colIndex).SetCellFormula(newYearLCR[a].Formula);
 
-                    string colNm = ikuNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
+                    string colNm = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
                     fCol = fCol + colNm + ",";
 
                     colIndex = colIndex + 1;
@@ -1082,7 +1082,7 @@ namespace iku_aras_plugin
                         sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
                         sheet1.GetRow(16).CreateCell(colIndex).SetCellFormula(newYearLCR[b].StretchFormula);
 
-                        string colNm = ikuNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
+                        string colNm = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
                         fCol = fCol + colNm + ",";
 
                         colIndex = colIndex + 1;

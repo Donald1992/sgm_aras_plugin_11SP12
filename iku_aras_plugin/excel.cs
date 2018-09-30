@@ -9,7 +9,7 @@ using NPOI.SS.Util;
 using NPOI.XSSF.UserModel;
 using NPOI.HSSF.UserModel;
 
-namespace iku_aras_plugin
+namespace sgm_aras_plugin
 {
     /// <summary>
     /// 表示单元格的维度，通常用于表达合并单元格的维度

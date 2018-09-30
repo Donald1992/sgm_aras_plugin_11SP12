@@ -8,11 +8,11 @@ using Aras.IOM;
 using Aras.Server.Core;
 using System.Windows.Forms;
 
-namespace iku_aras_plugin
+namespace sgm_aras_plugin
 {
    public class AddIdentityToRole
     {
-    public static void ikuAddIdentityToRoleUsePos(Item user,string role,CallContext CCO)
+    public static void sgmAddIdentityToRoleUsePos(Item user,string role,CallContext CCO)
         {
            string identityId= CCO.Identity.GetIdentityIdByUserId(user.getID());
             Innovator inn = user.getInnovator();
@@ -67,7 +67,7 @@ namespace iku_aras_plugin
             }
 
         }
-    public static void ikuAddIdentityToRoleUseDept(Item user, string role, CallContext CCO)
+    public static void sgmAddIdentityToRoleUseDept(Item user, string role, CallContext CCO)
         {
             string identityId = CCO.Identity.GetIdentityIdByUserId(user.getID());
             Innovator inn = user.getInnovator();

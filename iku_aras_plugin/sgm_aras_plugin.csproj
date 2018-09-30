@@ -7,8 +7,8 @@
     <ProjectGuid>{E2F3E4B1-1967-4290-9990-EDCC48729DF9}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>iku_aras_plugin</RootNamespace>
-    <AssemblyName>iku_aras_plugin</AssemblyName>
+    <RootNamespace>sgm_aras_plugin</RootNamespace>
+    <AssemblyName>sgm_aras_plugin</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -71,10 +71,10 @@
     <Compile Include="AddIdentityToRole.cs" />
     <Compile Include="B1Content.cs" />
     <Compile Include="excel.cs" />
-    <Compile Include="ikuMail.cs" />
-    <Compile Include="ikuNPOIUtils.cs" />
-    <Compile Include="ikuB1Utils.cs" />
-    <Compile Include="ikuUtils.cs" />
+    <Compile Include="sgmMail.cs" />
+    <Compile Include="sgmNPOIUtils.cs" />
+    <Compile Include="sgmB1Utils.cs" />
+    <Compile Include="sgmUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
