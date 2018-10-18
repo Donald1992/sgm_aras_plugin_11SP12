@@ -12,7 +12,7 @@ namespace sgm_aras_plugin
 {
    public class AddIdentityToRole
     {
-    public static void sgmAddIdentityToRoleUsePos(Item user,string role,CallContext CCO)
+    public static void ikuAddIdentityToRoleUsePos(Item user,string role,CallContext CCO)
         {
            string identityId= CCO.Identity.GetIdentityIdByUserId(user.getID());
             Innovator inn = user.getInnovator();
@@ -67,7 +67,7 @@ namespace sgm_aras_plugin
             }
 
         }
-    public static void sgmAddIdentityToRoleUseDept(Item user, string role, CallContext CCO)
+    public static void ikuAddIdentityToRoleUseDept(Item user, string role, CallContext CCO)
         {
             string identityId = CCO.Identity.GetIdentityIdByUserId(user.getID());
             Innovator inn = user.getInnovator();

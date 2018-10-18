@@ -18,7 +18,24 @@ namespace sgm_aras_plugin
 {
     public class sgmB1Utils
     {
+        static string sgm_EndRow;
 
+        public string getEndRow(Innovator inn)
+        {
+            string endRow="";
+            Item variableItem = inn.newItem("Variable", "get");
+            variableItem.setProperty("name", "sgm_B1EndRow");
+            variableItem = variableItem.apply();
+            if (variableItem.isError())
+            {
+                endRow = variableItem.getProperty("value");
+            }else
+            {
+                endRow = "300";
+            }
+
+            return endRow;
+        }
         public List<YearLCR> yearLCR =new List<YearLCR>();
         public static List<ModelLine> getAllModelLine(Innovator inn,Item modelyear,string is_stretch)
         {
@@ -337,6 +354,8 @@ namespace sgm_aras_plugin
         }
         public void OutPutXLS(HSSFWorkbook hssfworkbook,Innovator inn,string cartID)
         {
+            sgm_EndRow = getEndRow(inn);
+
             List<B1Content> b1Content = new List<B1Content>();
             b1Content = getAllB1Content(inn, cartID);
             if (is_export(b1Content))
@@ -358,7 +377,7 @@ namespace sgm_aras_plugin
 
             int startColIndex = 4;
             
-    
+            
             string v1 = sheet1.GetRow(0).GetCell(5).ToString();
             string v2 = sheet1.GetRow(0).GetCell(6).ToString();
             if (v1.Trim() != "")
@@ -465,8 +484,10 @@ namespace sgm_aras_plugin
                                 string colNm1 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
                                 string colNm2 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex + 1);
 
-                                fn = fn + ml.PackageLCR + "*"+colNm1 + inputRow.ToString()+"*" + colNm2 + inputRow.ToString()+"+";
-                                stretchFn = stretchFn+ ml.StretchPackageLCR + "*" + colNm1 + inputRow.ToString()+"*" + colNm2 + inputRow.ToString() + "+";
+                                //fn = fn + ml.PackageLCR + "*"+colNm1 + inputRow.ToString()+"*" + colNm2 + inputRow.ToString()+"+";
+                                //stretchFn = stretchFn+ ml.StretchPackageLCR + "*" + colNm1 + inputRow.ToString()+"*" + colNm2 + inputRow.ToString() + "+";
+                                fn = fn + ml.PackageLCR + "*" + colNm1 +  "{0}*" + colNm2 + "{0}+";
+                                stretchFn = stretchFn + ml.StretchPackageLCR + "*" + colNm1 + "{0}*" + colNm2 +  "{0}+";
 
                                 colIndex = colIndex + 2;
 
@@ -531,6 +552,12 @@ namespace sgm_aras_plugin
                 sheet1.GetRow(noteRow).CreateCell(colIndex);
                 sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
                 colIndex = colIndex + 1;
+                int endInputRow = int.Parse(sgm_EndRow);
+                for (int q=0;q< endInputRow-1; q++)
+                {
+                    sgmNPOIUtils.CopyRow(sheet1, inputRow +q, inputRow-1, 1);
+                }
+
 
                 for (int a = 0; a < newYearLCR.Count; a++)
                 {
@@ -539,7 +566,16 @@ namespace sgm_aras_plugin
                     sheet1.GetRow(CRow).GetCell(colIndex).CellStyle = titleStyle;
                     sheet1.GetRow(noteRow).CreateCell(colIndex);
                     sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
-                    sheet1.GetRow(inputRow-1).CreateCell(colIndex).SetCellFormula(newYearLCR[a].Formula);
+                    //sheet1.GetRow(inputRow - 1).CreateCell(colIndex).SetCellFormula(newYearLCR[a].Formula);
+
+                    string xFn = newYearLCR[a].Formula;
+                    for (int f = 0; f < endInputRow; f++)
+                    {
+                        string yFn = string.Format(xFn, inputRow + f);
+                        int r = inputRow - 1 + f;
+                        sheet1.GetRow(r).CreateCell(colIndex).SetCellFormula(yFn);
+                    }
+
 
                     string colNm= sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
                     fCol = fCol + colNm + ",";
@@ -558,7 +594,18 @@ namespace sgm_aras_plugin
                         sheet1.GetRow(CRow).GetCell(colIndex).CellStyle = titleStyle;
                         sheet1.GetRow(noteRow).CreateCell(colIndex);
                         sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
-                        sheet1.GetRow(inputRow - 1).CreateCell(colIndex).SetCellFormula(newYearLCR[b].StretchFormula);
+                        //    sheet1.GetRow(inputRow - 1).CreateCell(colIndex).SetCellFormula(newYearLCR[b].StretchFormula);
+
+              //          int endInputRow = int.Parse(sgm_EndRow);
+                        string xFn = newYearLCR[b].Formula;
+                        for (int f = 0; f < endInputRow; f++)
+                        {
+                            string yFn = string.Format(xFn, inputRow + f);
+                            int r = inputRow - 1 + f;
+                    //        sgmNPOIUtils.CopyRow(sheet1, r - 1, r, 1);
+
+                            sheet1.GetRow(r).CreateCell(colIndex).SetCellFormula(yFn);
+                        }
 
                         string colNm = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
                         fCol = fCol + colNm + ",";
@@ -578,12 +625,13 @@ namespace sgm_aras_plugin
                     sheet1.GetRow(mixRow).GetCell(a).CellStyle = titleStyle;
                 }
 
-                for (int c = inputRow-1; c < 42; c++)
+                for (int c = inputRow - 1; c < inputRow - 1+ endInputRow; c++)
                 {
                     for (int d = startColIndex; d < colIndex; d++)
                     {
-                        if (c == inputRow - 1 && d > myColIndex)
-                        {
+                    //    if (c == inputRow - 1 && d > myColIndex)
+                       if ( d > myColIndex)
+                       {
                             sheet1.GetRow(c).GetCell(d).CellStyle = lcrStyle; ;
                         }
                         else if (d == myColIndex)
@@ -621,6 +669,7 @@ namespace sgm_aras_plugin
             sheet1 = hssfworkbook.GetSheet("B1 Form");
             int startColIndex = 4;
 
+            int endInputRow = int.Parse(sgm_EndRow);
 
             string v1 = sheet1.GetRow(0).GetCell(5).ToString();
             string v2 = sheet1.GetRow(0).GetCell(6).ToString();
@@ -687,6 +736,13 @@ namespace sgm_aras_plugin
 
             if (b1Content.Count > 0)
             {
+
+                for (int q = 0; q < endInputRow - 1; q++)
+                {
+                    sgmNPOIUtils.CopyRow(sheet1, inputRow + q, inputRow - 1, 1);
+                }
+
+
                 for (int i = 0; i < b1Content.Count; i++)
                 {
                     if (ExportCount(b1Content[i]) > 1)
@@ -754,8 +810,12 @@ namespace sgm_aras_plugin
                                     string colNm1 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
                                     string colNm2 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex + 1);
 
-                                    fn = fn + ml.PackageLCR + "*" + colNm1 + inputRow.ToString() + "*" + colNm2 + inputRow.ToString() + "+";
-                                    stretchFn = stretchFn + ml.StretchPackageLCR + "*" + colNm1 + inputRow.ToString() + "*" + colNm2 + inputRow.ToString() + "+";
+                               //     fn = fn + ml.PackageLCR + "*" + colNm1 + inputRow.ToString() + "*" + colNm2 + inputRow.ToString() + "+";
+                              //      stretchFn = stretchFn + ml.StretchPackageLCR + "*" + colNm1 + inputRow.ToString() + "*" + colNm2 + inputRow.ToString() + "+";
+
+                                    fn = fn + ml.PackageLCR + "*" + colNm1 + "{0}*" + colNm2 + "{0}+";
+                                    stretchFn = stretchFn + ml.StretchPackageLCR + "*" + colNm1 + "{0}*" + colNm2 + "{0}+";
+
 
                                     colIndex = colIndex + 2;
 
@@ -865,7 +925,7 @@ namespace sgm_aras_plugin
                                 //sheet1.GetRow(noteRow).CreateCell(colIndex + 1).CellStyle = style1;
 
                                 string colNm1 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
-                                //string colNm2 = ikuNPOIUtils.ConvertColumnIndexToColumnName(colIndex + 1);
+                                //string colNm2 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex + 1);
 
                                 //fn = fn + ml.PackageLCR + "*" + colNm1 + "17*" + colNm2 + "17+";
                                 //stretchFn = stretchFn + ml.StretchPackageLCR + "*" + colNm1 + "17*" + colNm2 + "17+";
@@ -962,12 +1022,17 @@ namespace sgm_aras_plugin
 
                                     string exportFn = EM.Formula;
 
-                                    exportFn = exportFn + ml.PackageLCR + "*" + colNm1 + inputRow.ToString() + "*" + colNm2 + inputRow.ToString() + "+";
+                             //       exportFn = exportFn + ml.PackageLCR + "*" + colNm1 + inputRow.ToString() + "*" + colNm2 + inputRow.ToString() + "+";
+                                    exportFn = exportFn + ml.PackageLCR + "*" + colNm1 + "{0}*" + colNm2 + "{0}+";
 
                                     EM.Formula = exportFn;
 
-                                    fn = fn + ml.PackageLCR + "*" + colNm1 + inputRow.ToString() + "*" + colNm2 + inputRow.ToString() + "+";
-                                    stretchFn = stretchFn + ml.StretchPackageLCR + "*" + colNm1 + inputRow.ToString() + "*" + colNm2 + inputRow.ToString() + "+";
+                         //           fn = fn + ml.PackageLCR + "*" + colNm1 + inputRow.ToString() + "*" + colNm2 + inputRow.ToString() + "+";
+                         //           stretchFn = stretchFn + ml.StretchPackageLCR + "*" + colNm1 + inputRow.ToString() + "*" + colNm2 + inputRow.ToString() + "+";
+
+                                    fn = fn + ml.PackageLCR + "*" + colNm1 +  "{0}*" + colNm2 +  "{0}+";
+                                    stretchFn = stretchFn + ml.StretchPackageLCR + "*" + colNm1 + "{0}*" + colNm2 + "{0}+";
+
 
                                     colIndex = colIndex + 2;
 
@@ -1030,7 +1095,16 @@ namespace sgm_aras_plugin
                             fn = fn.Substring(0, fn.Length - 1);
                             fn = "(" + fn + ")";
                             fn = fn + "/" + pLCR;
-                            sheet1.GetRow(16).CreateCell(em.ColIndex).SetCellFormula(fn);
+
+
+                            for (int f = 0; f < endInputRow; f++)
+                            {
+                                string yFn = string.Format(fn, inputRow + f);
+                                int r = inputRow - 1 + f;
+                                sheet1.GetRow(r).CreateCell(em.ColIndex).SetCellFormula(yFn);
+                            }
+
+                    //        sheet1.GetRow(16).CreateCell(em.ColIndex).SetCellFormula(fn);
                             sheet1.GetRow(16).GetCell(em.ColIndex).CellStyle = lcrStyle;
 
                             string colNm = sgmNPOIUtils.ConvertColumnIndexToColumnName(em.ColIndex);
@@ -1063,7 +1137,16 @@ namespace sgm_aras_plugin
                     sheet1.GetRow(CRow).GetCell(colIndex).CellStyle = titleStyle;
                     sheet1.GetRow(noteRow).CreateCell(colIndex);
                     sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
-                    sheet1.GetRow(16).CreateCell(colIndex).SetCellFormula(newYearLCR[a].Formula);
+                    //  sheet1.GetRow(16).CreateCell(colIndex).SetCellFormula(newYearLCR[a].Formula);
+
+                    string xFn = newYearLCR[a].Formula;
+                    for (int f = 0; f < endInputRow; f++)
+                    {
+                        string yFn = string.Format(xFn, inputRow + f);
+                        int r = inputRow - 1 + f;
+                        sheet1.GetRow(r).CreateCell(colIndex).SetCellFormula(yFn);
+                    }
+
 
                     string colNm = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
                     fCol = fCol + colNm + ",";
@@ -1080,7 +1163,16 @@ namespace sgm_aras_plugin
                         sheet1.GetRow(CRow).GetCell(colIndex).CellStyle = titleStyle;
                         sheet1.GetRow(noteRow).CreateCell(colIndex);
                         sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
-                        sheet1.GetRow(16).CreateCell(colIndex).SetCellFormula(newYearLCR[b].StretchFormula);
+                        //   sheet1.GetRow(16).CreateCell(colIndex).SetCellFormula(newYearLCR[b].StretchFormula);
+
+                        string xFn = newYearLCR[b].Formula;
+                        for (int f = 0; f < endInputRow; f++)
+                        {
+                            string yFn = string.Format(xFn, inputRow + f);
+                            int r = inputRow - 1 + f;
+                            sheet1.GetRow(r).CreateCell(colIndex).SetCellFormula(yFn);
+                        }
+
 
                         string colNm = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
                         fCol = fCol + colNm + ",";
@@ -1101,22 +1193,18 @@ namespace sgm_aras_plugin
                 //MessageBox.Show("colIndex is :" + colIndex.ToString());
                 //MessageBox.Show("myColIndex is: "+myColIndex.ToString());
 
-                for (int c = inputRow - 1; c < 42; c++)
+                for (int c = inputRow - 1; c < inputRow - 1 + endInputRow; c++)
                 {
                     for (int d = startColIndex; d < colIndex; d++)
                     {
 
-                        if (c == inputRow - 1 && exportCols.Exists(s => s == d))
+                        if ( exportCols.Exists(s => s == d))
                         {
                             sheet1.GetRow(c).GetCell(d).CellStyle = lcrStyle;
                             continue;
                         }
-                        if (c != inputRow - 1 && exportCols.Exists(s => s == d))
-                        {
-                            sheet1.GetRow(c).CreateCell(d).CellStyle = QPUStyle;
-                            continue;
-                        }
-                        if (c == inputRow - 1 && d > myColIndex)
+                        
+                        if (d > myColIndex)
                         {
                             sheet1.GetRow(c).GetCell(d).CellStyle = lcrStyle;
                             continue;
@@ -1143,6 +1231,8 @@ namespace sgm_aras_plugin
                             continue;
                         }
 
+
+                        //}
 
                     }
                 }
