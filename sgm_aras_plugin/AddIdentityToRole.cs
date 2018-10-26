@@ -12,7 +12,7 @@ namespace sgm_aras_plugin
 {
    public class AddIdentityToRole
     {
-    public static void ikuAddIdentityToRoleUsePos(Item user,string role,CallContext CCO)
+    public static void sgmAddIdentityToRoleUsePos(Item user,string role,CallContext CCO)
         {
            string identityId= CCO.Identity.GetIdentityIdByUserId(user.getID());
             Innovator inn = user.getInnovator();
@@ -67,7 +67,7 @@ namespace sgm_aras_plugin
             }
 
         }
-    public static void ikuAddIdentityToRoleUseDept(Item user, string role, CallContext CCO)
+    public static void sgmAddIdentityToRoleUseDept(Item user, string role, CallContext CCO)
         {
             string identityId = CCO.Identity.GetIdentityIdByUserId(user.getID());
             Innovator inn = user.getInnovator();
@@ -139,5 +139,43 @@ namespace sgm_aras_plugin
                 return false;
             }
         }
+
+        public static void setAliasName(Item user, CallContext CCO)
+        {
+            string aliasId = CCO.Identity.GetUserAliases(user.getID());
+            Innovator inn = user.getInnovator();
+            Item userAlias = inn.getItemById("Identity", aliasId);
+            string aml = "<AML>";
+            aml += "<Item type='ItemType' action='get'>";
+            aml += "    <name>User</name>";
+            aml += "	<Relationships>";
+            aml += "		<Item type='Property' select='name,keyed_name_order' orderBy='keyed_name_order'>";
+            aml += "            <keyed_name_order condition = 'is not null' />";
+            aml += "		</Item>";
+            aml += "	</Relationships>";
+            aml += "</Item>";
+            aml += "</AML>";
+        
+            Item userType = inn.applyAML(aml);
+            XmlNodeList ndsList = userType.node.SelectNodes("Relationships/Item[@type='Property']/name");
+
+            string tagName = "";
+            for (int i = 0; i < ndsList.Count; i++)
+            {
+                string propName = ndsList[i].InnerText;
+                tagName = tagName+" "+user.getProperty(propName);
+            }
+            tagName = tagName.Trim();
+            if (tagName!="")
+            {
+
+                string sql = "UPDATE [innovator].[IDENTITY] set name='{0}' WHERE id='{1}'";
+                sql = string.Format(sql, tagName, aliasId);
+                Item temp = inn.applySQL(sql);
+            }
+
+        }
+
     }
+
 }
