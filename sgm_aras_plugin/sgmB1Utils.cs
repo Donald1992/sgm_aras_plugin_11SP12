@@ -24,11 +24,14 @@ namespace sgm_aras_plugin
         {
             string endRow="";
             Item variableItem = inn.newItem("Variable", "get");
+            variableItem.setAttribute("select","value,name");
             variableItem.setProperty("name", "sgm_B1EndRow");
             variableItem = variableItem.apply();
+
+      
             if (variableItem.isError())
             {
-                endRow = variableItem.getProperty("value");
+                endRow = variableItem.getItemByIndex(0).getProperty("value");
             }else
             {
                 endRow = "300";
@@ -105,7 +108,7 @@ namespace sgm_aras_plugin
                     ModelYear m = new ModelYear();
                     m.LCR = my.getItemByIndex(i).getProperty("lcr");
                     m.Year= my.getItemByIndex(i).getProperty("year");
-                    m.StretchLCR = my.getItemByIndex(i).getProperty("stretch_lcr");
+                    m.StretchLCR = my.getItemByIndex(i).getProperty("stretch_lcr")??"0";
                     List<ModelLine> ml = getAllModelLine(inn,my.getItemByIndex(i),is_stretch);
                     m.ModelLine = ml;
                     modelyear.Add(m);
@@ -202,11 +205,15 @@ namespace sgm_aras_plugin
             for (int i=0;i<b1Content.CountryGroup.Count;i++)
             {
                 CountryGroup cg = b1Content.CountryGroup[i];
-                for (int j=0;j< cg.ModelYear.Count;j++)
+                if (cg.Country!="China")  //不为china的才加入出口综合
                 {
-                    ModelYear my = cg.ModelYear[j];
-                    tempMY.Add(my);
+                    for (int j = 0; j < cg.ModelYear.Count; j++)
+                    {
+                        ModelYear my = cg.ModelYear[j];
+                        tempMY.Add(my);
+                    }
                 }
+
             }
 
             List<string> templist = tempMY.Select(p => p.Year).Distinct().ToList();  //year去重
@@ -343,7 +350,7 @@ namespace sgm_aras_plugin
             {
                 
                 int exportcount = ExportCount(b1content[i]);
-                if (exportcount > 1)
+                if (exportcount >2)
                 {
                     f = f | true;
                 }
@@ -569,6 +576,7 @@ namespace sgm_aras_plugin
                     //sheet1.GetRow(inputRow - 1).CreateCell(colIndex).SetCellFormula(newYearLCR[a].Formula);
 
                     string xFn = newYearLCR[a].Formula;
+                    xFn = "IF(AND(TRIM(A{0})=\"\",TRIM(B{0})=\"\"),\"\"," + xFn + ")";
                     for (int f = 0; f < endInputRow; f++)
                     {
                         string yFn = string.Format(xFn, inputRow + f);
@@ -598,6 +606,7 @@ namespace sgm_aras_plugin
 
               //          int endInputRow = int.Parse(sgm_EndRow);
                         string xFn = newYearLCR[b].Formula;
+                        xFn = "IF(AND(TRIM(A{0})=\"\",TRIM(B{0})=\"\"),\"\"," + xFn + ")";
                         for (int f = 0; f < endInputRow; f++)
                         {
                             string yFn = string.Format(xFn, inputRow + f);
@@ -745,7 +754,7 @@ namespace sgm_aras_plugin
 
                 for (int i = 0; i < b1Content.Count; i++)
                 {
-                    if (ExportCount(b1Content[i]) > 1)
+                    if (ExportCount(b1Content[i]) > 2)  //原先为>1，B1表中大于2的才是出口综合，修改此处
                     {
                         exportB1.Add(b1Content[i]);
                     }
@@ -877,15 +886,13 @@ namespace sgm_aras_plugin
                         List<ExportModel> exportModels = new List<ExportModel>();
                         B1Content b1 = exportB1[i];
 
+
                         List<ModelYear> myList = getAllExportModelYear(b1);  //综合版部分
 
                         for (int m = 0; m < myList.Count; m++)
                         {
                             ModelYear my = myList[m];
                             List<ModelLine> modelline = my.ModelLine;
-                            //  YearLCR yl = new YearLCR(my.Year);
-                            //string fn = "SUM(";
-                            //string stretchFn = "SUM(";
 
                             for (int n = 0; n < modelline.Count; n++)
                             {
@@ -894,12 +901,196 @@ namespace sgm_aras_plugin
 
                                 em.UDM = ml.UMD;
                                 em.Package = ml.Package;
-                                em.ColIndex = colIndex;
+                        //        em.ColIndex = colIndex;
                                 em.Formula = "";
                                 em.Year = my.Year;
-                                exportCols.Add(colIndex);
+                         //       exportCols.Add(colIndex);
 
                                 emList.Add(em);
+
+                                //int colWidth = sheet1.GetColumnWidth(colIndex);
+                                //sheet1.SetColumnWidth(colIndex, colWidth * 2);
+
+                                //sheet1.GetRow(UMDRow).CreateCell(colIndex).SetCellValue(ml.UMD);
+                                //sheet1.GetRow(UMDRow).GetCell(colIndex).CellStyle = titleStyle;
+                                ////sheet1.GetRow(UMDRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+
+                                //sheet1.GetRow(PRow).CreateCell(colIndex).SetCellValue(ml.Package);
+                                //sheet1.GetRow(PRow).GetCell(colIndex).CellStyle = titleStyle;
+                                ////sheet1.GetRow(PRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+
+                                //sheet1.GetRow(mixRow).CreateCell(colIndex).CellStyle = mStyle;
+                                ////sheet1.GetRow(mixRow).CreateCell(colIndex + 1).CellStyle = mStyle;
+                                //sheet1.GetRow(mixRow).GetCell(colIndex).SetCellValue(double.Parse(ml.Mix) / 100);
+
+                                //sheet1.GetRow(CRow).CreateCell(colIndex).SetCellValue("");
+                                //sheet1.GetRow(CRow).GetCell(colIndex).CellStyle = titleStyle;
+                                ////sheet1.GetRow(CRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+
+                                //sheet1.GetRow(noteRow).CreateCell(colIndex).SetCellValue("QPU");
+                                //sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
+                                ////sheet1.GetRow(noteRow).CreateCell(colIndex + 1).CellStyle = style1;
+
+                                //string colNm1 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
+                                ////string colNm2 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex + 1);
+
+                                //colIndex = colIndex + 1;
+
+                            }
+
+
+                            //sheet1.AddMergedRegion(new CellRangeAddress(MYRow, MYRow, yearStart, colIndex - 1));
+                            //sheet1.GetRow(MYRow).CreateCell(yearStart).SetCellValue(my.Year);
+                            //sheet1.GetRow(MYRow).GetCell(yearStart).CellStyle = titleStyle;
+                            //for (int x = yearStart + 1; x < colIndex; x++)
+                            //{
+                            //    sheet1.GetRow(MYRow).CreateCell(x);
+                            //    sheet1.GetRow(MYRow).GetCell(x).CellStyle = titleStyle;
+                            //}
+
+                            //yearStart = colIndex;
+
+                        }
+                        //sheet1.AddMergedRegion(new CellRangeAddress(CGRow, CGRow, countryStart, yearStart - 1));
+                        //sheet1.GetRow(CGRow).CreateCell(countryStart).SetCellValue("出口综合版");
+                        //sheet1.GetRow(CGRow).GetCell(countryStart).CellStyle = titleStyle;
+                        //for (int y = countryStart + 1; y < yearStart; y++)
+                        //{
+                        //    sheet1.GetRow(CGRow).CreateCell(y);
+                        //    sheet1.GetRow(CGRow).GetCell(y).CellStyle = titleStyle;
+                        //}
+
+                        //               countryStart = yearStart;
+                        countryStart = colIndex;
+
+                        //========以下是出口正常输出的部分
+
+                        List<CountryGroup> countrygroup = b1.CountryGroup;
+                        for (int j = 0; j < countrygroup.Count; j++)
+                        {
+                            CountryGroup cg = countrygroup[j];
+
+                            List<ModelYear> modelyear = cg.ModelYear;
+                            for (int m = 0; m < modelyear.Count; m++)
+                            {
+                                ModelYear my = modelyear[m];
+                                List<ModelLine> modelline = my.ModelLine;
+                                YearLCR yl = new YearLCR(my.Year);
+                                string fn = "SUM(";
+                                string stretchFn = "SUM(";
+
+                                for (int n = 0; n < modelline.Count; n++)
+                                {
+                                    ModelLine ml = modelline[n];
+
+                                    sheet1.AddMergedRegion(new CellRangeAddress(UMDRow, UMDRow, colIndex, colIndex + 1));
+                                    sheet1.GetRow(UMDRow).CreateCell(colIndex).SetCellValue(ml.UMD);
+                                    sheet1.GetRow(UMDRow).GetCell(colIndex).CellStyle = titleStyle;
+                                    sheet1.GetRow(UMDRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+
+                                    sheet1.AddMergedRegion(new CellRangeAddress(PRow, PRow, colIndex, colIndex + 1));
+                                    sheet1.GetRow(PRow).CreateCell(colIndex).SetCellValue(ml.Package);
+                                    sheet1.GetRow(PRow).GetCell(colIndex).CellStyle = titleStyle;
+                                    sheet1.GetRow(PRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+
+
+                                    sheet1.AddMergedRegion(new CellRangeAddress(mixRow, mixRow, colIndex, colIndex + 1));
+                                    sheet1.GetRow(mixRow).CreateCell(colIndex).CellStyle = mStyle;
+                                    sheet1.GetRow(mixRow).CreateCell(colIndex + 1).CellStyle = mStyle;
+                                    sheet1.GetRow(mixRow).GetCell(colIndex).SetCellValue(double.Parse(ml.Mix) / 100);
+
+
+                                    sheet1.AddMergedRegion(new CellRangeAddress(CRow, CRow, colIndex, colIndex + 1));
+                                    sheet1.GetRow(CRow).CreateCell(colIndex).SetCellValue("");
+                                    sheet1.GetRow(CRow).GetCell(colIndex).CellStyle = titleStyle;
+                                    sheet1.GetRow(CRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+
+                                    sheet1.GetRow(noteRow).CreateCell(colIndex).SetCellValue("mix");
+                                    mixCols.Add(colIndex);
+                                    sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
+                                    sheet1.GetRow(noteRow).CreateCell(colIndex + 1).SetCellValue("QPU");
+                                    QPUCols.Add(colIndex + 1);
+                                    sheet1.GetRow(noteRow).GetCell(colIndex + 1).CellStyle = style1;
+
+                                    string colNm1 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
+                                    string colNm2 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex + 1);
+
+                                    if (cg.Country != "China")
+                                    {
+                                        ExportModel EM = emList.Find(s => s.Year == my.Year && s.Package == ml.Package);
+                                        if (EM != null)
+                                        {
+                                            string exportFn = EM.Formula;
+
+                                            exportFn = exportFn + ml.PackageLCR + "*" + colNm1 + "{0}*" + colNm2 + "{0}+";
+
+                                            EM.Formula = exportFn;
+                                        }
+                                    }
+                                 
+
+                                    fn = fn + ml.PackageLCR + "*" + colNm1 +  "{0}*" + colNm2 +  "{0}+";
+                                    stretchFn = stretchFn + ml.StretchPackageLCR + "*" + colNm1 + "{0}*" + colNm2 + "{0}+";
+
+
+                                    colIndex = colIndex + 2;
+
+                                }
+                                fn = fn.Substring(0, fn.Length - 1);
+                                fn = fn + ")";
+                                stretchFn = stretchFn.Substring(0, stretchFn.Length - 1);
+
+                                stretchFn = stretchFn + ")";
+                                yl.Formula = fn;
+                                yl.StretchFormula = stretchFn;
+                                yearLCR.Add(yl);
+
+                                sheet1.AddMergedRegion(new CellRangeAddress(MYRow, MYRow, yearStart, colIndex - 1));
+                                sheet1.GetRow(MYRow).CreateCell(yearStart).SetCellValue(my.Year);
+                                sheet1.GetRow(MYRow).GetCell(yearStart).CellStyle = titleStyle;
+                                for (int x = yearStart + 1; x < colIndex; x++)
+                                {
+                                    sheet1.GetRow(MYRow).CreateCell(x);
+                                    sheet1.GetRow(MYRow).GetCell(x).CellStyle = titleStyle;
+                                }
+
+                                yearStart = colIndex;   
+
+                            }
+
+
+                            sheet1.AddMergedRegion(new CellRangeAddress(CGRow, CGRow, countryStart, yearStart - 1));
+                            sheet1.GetRow(CGRow).CreateCell(countryStart).SetCellValue(cg.Country);
+                            sheet1.GetRow(CGRow).GetCell(countryStart).CellStyle = titleStyle;
+                            for (int y = countryStart + 1; y < yearStart; y++)
+                            {
+                                sheet1.GetRow(CGRow).CreateCell(y);
+                                sheet1.GetRow(CGRow).GetCell(y).CellStyle = titleStyle;
+                            }
+
+                            countryStart = yearStart;
+                        }
+
+                        //sheet1.AddMergedRegion(new CellRangeAddress(PGRow, PGRow, programeStart, countryStart - 1));
+                        //sheet1.GetRow(PGRow).CreateCell(programeStart).SetCellValue(b1.Programe);
+                        //sheet1.GetRow(PGRow).GetCell(programeStart).CellStyle = titleStyle;
+                        //for (int z = programeStart + 1; z < countryStart; z++)
+                        //{
+                        //    sheet1.GetRow(PGRow).CreateCell(z);
+                        //    sheet1.GetRow(PGRow).GetCell(z).CellStyle = titleStyle;
+                        //}
+
+
+                        //调整输出位置
+                        int exportStart = colIndex;
+                        for (int m = 0; m < myList.Count; m++)
+                        {
+                            ModelYear my = myList[m];
+                            List<ModelLine> modelline = my.ModelLine;
+
+                            for (int n = 0; n < modelline.Count; n++)
+                            {
+                                ModelLine ml = modelline[n];
 
                                 int colWidth = sheet1.GetColumnWidth(colIndex);
                                 sheet1.SetColumnWidth(colIndex, colWidth * 2);
@@ -927,20 +1118,10 @@ namespace sgm_aras_plugin
                                 string colNm1 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
                                 //string colNm2 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex + 1);
 
-                                //fn = fn + ml.PackageLCR + "*" + colNm1 + "17*" + colNm2 + "17+";
-                                //stretchFn = stretchFn + ml.StretchPackageLCR + "*" + colNm1 + "17*" + colNm2 + "17+";
-
                                 colIndex = colIndex + 1;
 
                             }
-                            //fn = fn.Substring(0, fn.Length - 1);
-                            //fn = fn + ")";
-                            //stretchFn = stretchFn.Substring(0, stretchFn.Length - 1);
 
-                            //stretchFn = stretchFn + ")";
-                            //yl.Formula = fn;
-                            //yl.StretchFormula = stretchFn;
-                            //yearLCR.Add(yl);
 
                             sheet1.AddMergedRegion(new CellRangeAddress(MYRow, MYRow, yearStart, colIndex - 1));
                             sheet1.GetRow(MYRow).CreateCell(yearStart).SetCellValue(my.Year);
@@ -963,128 +1144,12 @@ namespace sgm_aras_plugin
                             sheet1.GetRow(CGRow).GetCell(y).CellStyle = titleStyle;
                         }
 
-                        countryStart = yearStart;
-
-                        //========以下是出口正常输出的部分
-
-                        List<CountryGroup> countrygroup = b1.CountryGroup;
-                        for (int j = 0; j < countrygroup.Count; j++)
-                        {
-                            CountryGroup cg = countrygroup[j];
-                            List<ModelYear> modelyear = cg.ModelYear;
-                            for (int m = 0; m < modelyear.Count; m++)
-                            {
-                                ModelYear my = modelyear[m];
-                                List<ModelLine> modelline = my.ModelLine;
-                                YearLCR yl = new YearLCR(my.Year);
-                                string fn = "SUM(";
-                                string stretchFn = "SUM(";
-
-                                for (int n = 0; n < modelline.Count; n++)
-                                {
-                                    ModelLine ml = modelline[n];
-
-                                    ExportModel EM = emList.Find(s => s.Year == my.Year && s.Package == ml.Package);
-                                    //                 MessageBox.Show("the year: "+ EM.Year+" and Package: "+ EM.Package +" ColIndex is "+EM.ColIndex );
-
-                                    sheet1.AddMergedRegion(new CellRangeAddress(UMDRow, UMDRow, colIndex, colIndex + 1));
-                                    sheet1.GetRow(UMDRow).CreateCell(colIndex).SetCellValue(ml.UMD);
-                                    sheet1.GetRow(UMDRow).GetCell(colIndex).CellStyle = titleStyle;
-                                    sheet1.GetRow(UMDRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
-
-                                    sheet1.AddMergedRegion(new CellRangeAddress(PRow, PRow, colIndex, colIndex + 1));
-                                    sheet1.GetRow(PRow).CreateCell(colIndex).SetCellValue(ml.Package);
-                                    sheet1.GetRow(PRow).GetCell(colIndex).CellStyle = titleStyle;
-                                    sheet1.GetRow(PRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
-
-
-                                    sheet1.AddMergedRegion(new CellRangeAddress(mixRow, mixRow, colIndex, colIndex + 1));
-                                    sheet1.GetRow(mixRow).CreateCell(colIndex).CellStyle = mStyle;
-                                    sheet1.GetRow(mixRow).CreateCell(colIndex + 1).CellStyle = mStyle;
-                                    sheet1.GetRow(mixRow).GetCell(colIndex).SetCellValue(double.Parse(ml.Mix) / 100);
-
-
-                                    sheet1.AddMergedRegion(new CellRangeAddress(CRow, CRow, colIndex, colIndex + 1));
-                                    sheet1.GetRow(CRow).CreateCell(colIndex).SetCellValue("");
-                                    sheet1.GetRow(CRow).GetCell(colIndex).CellStyle = titleStyle;
-                                    sheet1.GetRow(CRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
-
-                                    //           sheet1.AddMergedRegion(new CellRangeAddress(noteRow, noteRow, colIndex, colIndex + 1));
-                                    sheet1.GetRow(noteRow).CreateCell(colIndex).SetCellValue("mix");
-                                    mixCols.Add(colIndex);
-                                    sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
-                                    sheet1.GetRow(noteRow).CreateCell(colIndex + 1).SetCellValue("QPU");
-                                    QPUCols.Add(colIndex + 1);
-                                    sheet1.GetRow(noteRow).GetCell(colIndex + 1).CellStyle = style1;
-
-                                    string colNm1 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
-                                    string colNm2 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex + 1);
-
-                                    string exportFn = EM.Formula;
-
-                             //       exportFn = exportFn + ml.PackageLCR + "*" + colNm1 + inputRow.ToString() + "*" + colNm2 + inputRow.ToString() + "+";
-                                    exportFn = exportFn + ml.PackageLCR + "*" + colNm1 + "{0}*" + colNm2 + "{0}+";
-
-                                    EM.Formula = exportFn;
-
-                         //           fn = fn + ml.PackageLCR + "*" + colNm1 + inputRow.ToString() + "*" + colNm2 + inputRow.ToString() + "+";
-                         //           stretchFn = stretchFn + ml.StretchPackageLCR + "*" + colNm1 + inputRow.ToString() + "*" + colNm2 + inputRow.ToString() + "+";
-
-                                    fn = fn + ml.PackageLCR + "*" + colNm1 +  "{0}*" + colNm2 +  "{0}+";
-                                    stretchFn = stretchFn + ml.StretchPackageLCR + "*" + colNm1 + "{0}*" + colNm2 + "{0}+";
-
-
-                                    colIndex = colIndex + 2;
-
-                                }
-                                fn = fn.Substring(0, fn.Length - 1);
-                                fn = fn + ")";
-                                stretchFn = stretchFn.Substring(0, stretchFn.Length - 1);
-
-                                stretchFn = stretchFn + ")";
-                                yl.Formula = fn;
-                                yl.StretchFormula = stretchFn;
-                                yearLCR.Add(yl);
-
-                                sheet1.AddMergedRegion(new CellRangeAddress(MYRow, MYRow, yearStart, colIndex - 1));
-                                sheet1.GetRow(MYRow).CreateCell(yearStart).SetCellValue(my.Year);
-                                sheet1.GetRow(MYRow).GetCell(yearStart).CellStyle = titleStyle;
-                                for (int x = yearStart + 1; x < colIndex; x++)
-                                {
-                                    sheet1.GetRow(MYRow).CreateCell(x);
-                                    sheet1.GetRow(MYRow).GetCell(x).CellStyle = titleStyle;
-                                }
-
-                                yearStart = colIndex;
-
-                            }
-
-
-                            sheet1.AddMergedRegion(new CellRangeAddress(CGRow, CGRow, countryStart, yearStart - 1));
-                            sheet1.GetRow(CGRow).CreateCell(countryStart).SetCellValue(cg.Country);
-                            sheet1.GetRow(CGRow).GetCell(countryStart).CellStyle = titleStyle;
-                            for (int y = countryStart + 1; y < yearStart; y++)
-                            {
-                                sheet1.GetRow(CGRow).CreateCell(y);
-                                sheet1.GetRow(CGRow).GetCell(y).CellStyle = titleStyle;
-                            }
-
-                            countryStart = yearStart;
-                        }
-
-                        sheet1.AddMergedRegion(new CellRangeAddress(PGRow, PGRow, programeStart, countryStart - 1));
-                        sheet1.GetRow(PGRow).CreateCell(programeStart).SetCellValue(b1.Programe + "-Export");
-                        sheet1.GetRow(PGRow).GetCell(programeStart).CellStyle = titleStyle;
-                        for (int z = programeStart + 1; z < countryStart; z++)
-                        {
-                            sheet1.GetRow(PGRow).CreateCell(z);
-                            sheet1.GetRow(PGRow).GetCell(z).CellStyle = titleStyle;
-                        }
-
-                        programeStart = countryStart;
+                        //调整结束
 
                         for (int j = 0; j < emList.Count; j++)
                         {
+
+                            exportCols.Add(exportStart);  //记录综合部分的列
                             ExportModel em = emList[j];
                             string year = em.Year;
                             ModelYear my = myList.Find(s => s.Year == year);
@@ -1093,24 +1158,37 @@ namespace sgm_aras_plugin
                             string pLCR = ml.PackageLCR;
                             string fn = em.Formula;
                             fn = fn.Substring(0, fn.Length - 1);
-                            fn = "(" + fn + ")";
-                            fn = fn + "/" + pLCR;
+                            fn = "IF(AND(TRIM(A{0})=\"\",TRIM(B{0})=\"\"),\"\",(" + fn + ")/" + pLCR+")";
 
 
                             for (int f = 0; f < endInputRow; f++)
                             {
                                 string yFn = string.Format(fn, inputRow + f);
                                 int r = inputRow - 1 + f;
-                                sheet1.GetRow(r).CreateCell(em.ColIndex).SetCellFormula(yFn);
+                                sheet1.GetRow(r).CreateCell(exportStart).SetCellFormula(yFn);
                             }
 
-                    //        sheet1.GetRow(16).CreateCell(em.ColIndex).SetCellFormula(fn);
-                            sheet1.GetRow(16).GetCell(em.ColIndex).CellStyle = lcrStyle;
+                            sheet1.GetRow(16).GetCell(exportStart).CellStyle = lcrStyle;
 
-                            string colNm = sgmNPOIUtils.ConvertColumnIndexToColumnName(em.ColIndex);
+                            string colNm = sgmNPOIUtils.ConvertColumnIndexToColumnName(exportStart);
                             fCol = fCol + colNm + ",";
 
+                            exportStart = exportStart + 1;
+
                         }
+
+                        //调整输出位置
+                        sheet1.AddMergedRegion(new CellRangeAddress(PGRow, PGRow, programeStart, countryStart - 1));
+                        sheet1.GetRow(PGRow).CreateCell(programeStart).SetCellValue(b1.Programe);
+                        sheet1.GetRow(PGRow).GetCell(programeStart).CellStyle = titleStyle;
+                        for (int z = programeStart + 1; z < countryStart; z++)
+                        {
+                            sheet1.GetRow(PGRow).CreateCell(z);
+                            sheet1.GetRow(PGRow).GetCell(z).CellStyle = titleStyle;
+                        }
+
+                        //         programeStart = countryStart;
+                        programeStart = exportStart;
 
                     }
 
@@ -1140,6 +1218,7 @@ namespace sgm_aras_plugin
                     //  sheet1.GetRow(16).CreateCell(colIndex).SetCellFormula(newYearLCR[a].Formula);
 
                     string xFn = newYearLCR[a].Formula;
+                    xFn = "IF(AND(TRIM(A{0})=\"\",TRIM(B{0})=\"\"),\"\"," + xFn + ")";
                     for (int f = 0; f < endInputRow; f++)
                     {
                         string yFn = string.Format(xFn, inputRow + f);
@@ -1166,6 +1245,7 @@ namespace sgm_aras_plugin
                         //   sheet1.GetRow(16).CreateCell(colIndex).SetCellFormula(newYearLCR[b].StretchFormula);
 
                         string xFn = newYearLCR[b].Formula;
+                        xFn = "IF(AND(TRIM(A{0})=\"\",TRIM(B{0})=\"\"),\"\"," + xFn + ")";
                         for (int f = 0; f < endInputRow; f++)
                         {
                             string yFn = string.Format(xFn, inputRow + f);
@@ -1189,9 +1269,6 @@ namespace sgm_aras_plugin
                     sheet1.GetRow(mixRow).CreateCell(a);
                     sheet1.GetRow(mixRow).GetCell(a).CellStyle = titleStyle;
                 }
-
-                //MessageBox.Show("colIndex is :" + colIndex.ToString());
-                //MessageBox.Show("myColIndex is: "+myColIndex.ToString());
 
                 for (int c = inputRow - 1; c < inputRow - 1 + endInputRow; c++)
                 {
