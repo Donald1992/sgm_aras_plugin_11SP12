@@ -460,43 +460,43 @@ namespace sgm_aras_plugin
                             for (int n = 0; n < modelline.Count; n++)
                             {
                                 ModelLine ml = modelline[n];
+                                int colWidth = sheet1.GetColumnWidth(colIndex);
+                                sheet1.SetColumnWidth(colIndex, colWidth * 2);
 
-                                sheet1.AddMergedRegion(new CellRangeAddress(UMDRow, UMDRow, colIndex, colIndex + 1));
+                                //sheet1.AddMergedRegion(new CellRangeAddress(UMDRow, UMDRow, colIndex, colIndex + 1));
                                 sheet1.GetRow(UMDRow).CreateCell(colIndex).SetCellValue(ml.UMD);
                                 sheet1.GetRow(UMDRow).GetCell(colIndex).CellStyle = titleStyle;
-                                sheet1.GetRow(UMDRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+                                //sheet1.GetRow(UMDRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
 
-                                sheet1.AddMergedRegion(new CellRangeAddress(PRow, PRow, colIndex, colIndex + 1));
+                                //sheet1.AddMergedRegion(new CellRangeAddress(PRow, PRow, colIndex, colIndex + 1));
                                 sheet1.GetRow(PRow).CreateCell(colIndex).SetCellValue(ml.Package);
                                 sheet1.GetRow(PRow).GetCell(colIndex).CellStyle = titleStyle;
-                                sheet1.GetRow(PRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+                                //sheet1.GetRow(PRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
 
 
-                                sheet1.AddMergedRegion(new CellRangeAddress(mixRow, mixRow, colIndex, colIndex + 1));
+                                //sheet1.AddMergedRegion(new CellRangeAddress(mixRow, mixRow, colIndex, colIndex + 1));
                                 sheet1.GetRow(mixRow).CreateCell(colIndex).SetCellValue(ml.Mix+"%");
                                 sheet1.GetRow(mixRow).GetCell(colIndex).CellStyle = titleStyle;
-                                sheet1.GetRow(mixRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+                                //sheet1.GetRow(mixRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
 
-                                sheet1.AddMergedRegion(new CellRangeAddress(CRow, CRow, colIndex, colIndex + 1));
+                                //sheet1.AddMergedRegion(new CellRangeAddress(CRow, CRow, colIndex, colIndex + 1));
                                 sheet1.GetRow(CRow).CreateCell(colIndex).SetCellValue("");
                                 sheet1.GetRow(CRow).GetCell(colIndex).CellStyle = titleStyle;
-                                sheet1.GetRow(CRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+                                //sheet1.GetRow(CRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
 
 
-                                sheet1.GetRow(noteRow).CreateCell(colIndex).SetCellValue("mix");
+                                sheet1.GetRow(noteRow).CreateCell(colIndex).SetCellValue("QPU");
                                 sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
-                                sheet1.GetRow(noteRow).CreateCell(colIndex + 1).SetCellValue("QPU");
-                                sheet1.GetRow(noteRow).GetCell(colIndex + 1).CellStyle = style1;
+                                //sheet1.GetRow(noteRow).CreateCell(colIndex + 1).SetCellValue("QPU");
+                                //sheet1.GetRow(noteRow).GetCell(colIndex + 1).CellStyle = style1;
 
                                 string colNm1 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
-                                string colNm2 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex + 1);
+                                //string colNm2 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex + 1);
 
-                                //fn = fn + ml.PackageLCR + "*"+colNm1 + inputRow.ToString()+"*" + colNm2 + inputRow.ToString()+"+";
-                                //stretchFn = stretchFn+ ml.StretchPackageLCR + "*" + colNm1 + inputRow.ToString()+"*" + colNm2 + inputRow.ToString() + "+";
-                                fn = fn + ml.PackageLCR + "*" + colNm1 +  "{0}*" + colNm2 + "{0}+";
-                                stretchFn = stretchFn + ml.StretchPackageLCR + "*" + colNm1 + "{0}*" + colNm2 +  "{0}+";
+                                fn = fn + ml.PackageLCR + "*" + colNm1 +  "{0}+";
+                                stretchFn = stretchFn + ml.StretchPackageLCR + "*" + colNm1 +  "{0}+";
 
-                                colIndex = colIndex + 2;
+                                colIndex = colIndex + 1;
 
                             }
                             fn = fn.Substring(0, fn.Length - 1);
@@ -785,48 +785,48 @@ namespace sgm_aras_plugin
                                 for (int n = 0; n < modelline.Count; n++)
                                 {
                                     ModelLine ml = modelline[n];
+                                    int colWidth = sheet1.GetColumnWidth(colIndex);
+                                    sheet1.SetColumnWidth(colIndex, colWidth * 2);
 
-                                    sheet1.AddMergedRegion(new CellRangeAddress(UMDRow, UMDRow, colIndex, colIndex + 1));
+                                    //sheet1.AddMergedRegion(new CellRangeAddress(UMDRow, UMDRow, colIndex, colIndex + 1));
                                     sheet1.GetRow(UMDRow).CreateCell(colIndex).SetCellValue(ml.UMD);
                                     sheet1.GetRow(UMDRow).GetCell(colIndex).CellStyle = titleStyle;
-                                    sheet1.GetRow(UMDRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+                                    //sheet1.GetRow(UMDRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
 
-                                    sheet1.AddMergedRegion(new CellRangeAddress(PRow, PRow, colIndex, colIndex + 1));
+                                    //sheet1.AddMergedRegion(new CellRangeAddress(PRow, PRow, colIndex, colIndex + 1));
                                     sheet1.GetRow(PRow).CreateCell(colIndex).SetCellValue(ml.Package);
                                     sheet1.GetRow(PRow).GetCell(colIndex).CellStyle = titleStyle;
-                                    sheet1.GetRow(PRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+                                    //sheet1.GetRow(PRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
 
 
-                                    sheet1.AddMergedRegion(new CellRangeAddress(mixRow, mixRow, colIndex, colIndex + 1));
+                                    //sheet1.AddMergedRegion(new CellRangeAddress(mixRow, mixRow, colIndex, colIndex + 1));
                                     sheet1.GetRow(mixRow).CreateCell(colIndex).CellStyle = mStyle;
-                                    sheet1.GetRow(mixRow).CreateCell(colIndex + 1).CellStyle = mStyle;
+                                    //sheet1.GetRow(mixRow).CreateCell(colIndex + 1).CellStyle = mStyle;
                                     sheet1.GetRow(mixRow).GetCell(colIndex).SetCellValue(double.Parse(ml.Mix) / 100);
 
 
-                                    sheet1.AddMergedRegion(new CellRangeAddress(CRow, CRow, colIndex, colIndex + 1));
+                                    //sheet1.AddMergedRegion(new CellRangeAddress(CRow, CRow, colIndex, colIndex + 1));
                                     sheet1.GetRow(CRow).CreateCell(colIndex).SetCellValue("");
                                     sheet1.GetRow(CRow).GetCell(colIndex).CellStyle = titleStyle;
-                                    sheet1.GetRow(CRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+                                    //sheet1.GetRow(CRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
 
                                     //    sheet1.AddMergedRegion(new CellRangeAddress(noteRow, noteRow, colIndex, colIndex + 1));
-                                    sheet1.GetRow(noteRow).CreateCell(colIndex).SetCellValue("mix");
+                                    sheet1.GetRow(noteRow).CreateCell(colIndex).SetCellValue("QPU");
                                     sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
                                     mixCols.Add(colIndex);
-                                    sheet1.GetRow(noteRow).CreateCell(colIndex + 1).SetCellValue("QPU");
-                                    sheet1.GetRow(noteRow).GetCell(colIndex + 1).CellStyle = style1;
-                                    QPUCols.Add(colIndex + 1);
+                                    //sheet1.GetRow(noteRow).CreateCell(colIndex + 1).SetCellValue("QPU");
+                                    //sheet1.GetRow(noteRow).GetCell(colIndex + 1).CellStyle = style1;
+                                    //QPUCols.Add(colIndex + 1);
 
                                     string colNm1 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
-                                    string colNm2 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex + 1);
+                                    //string colNm2 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex + 1);
 
-                               //     fn = fn + ml.PackageLCR + "*" + colNm1 + inputRow.ToString() + "*" + colNm2 + inputRow.ToString() + "+";
-                              //      stretchFn = stretchFn + ml.StretchPackageLCR + "*" + colNm1 + inputRow.ToString() + "*" + colNm2 + inputRow.ToString() + "+";
-
-                                    fn = fn + ml.PackageLCR + "*" + colNm1 + "{0}*" + colNm2 + "{0}+";
-                                    stretchFn = stretchFn + ml.StretchPackageLCR + "*" + colNm1 + "{0}*" + colNm2 + "{0}+";
+ 
+                                    fn = fn + ml.PackageLCR + "*" + colNm1 + "{0}+";
+                                    stretchFn = stretchFn + ml.StretchPackageLCR + "*" + colNm1 +  "{0}+";
 
 
-                                    colIndex = colIndex + 2;
+                                    colIndex = colIndex + 1;
 
                                 }
                                 fn = fn.Substring(0, fn.Length - 1);
@@ -907,60 +907,13 @@ namespace sgm_aras_plugin
                          //       exportCols.Add(colIndex);
 
                                 emList.Add(em);
-
-                                //int colWidth = sheet1.GetColumnWidth(colIndex);
-                                //sheet1.SetColumnWidth(colIndex, colWidth * 2);
-
-                                //sheet1.GetRow(UMDRow).CreateCell(colIndex).SetCellValue(ml.UMD);
-                                //sheet1.GetRow(UMDRow).GetCell(colIndex).CellStyle = titleStyle;
-                                ////sheet1.GetRow(UMDRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
-
-                                //sheet1.GetRow(PRow).CreateCell(colIndex).SetCellValue(ml.Package);
-                                //sheet1.GetRow(PRow).GetCell(colIndex).CellStyle = titleStyle;
-                                ////sheet1.GetRow(PRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
-
-                                //sheet1.GetRow(mixRow).CreateCell(colIndex).CellStyle = mStyle;
-                                ////sheet1.GetRow(mixRow).CreateCell(colIndex + 1).CellStyle = mStyle;
-                                //sheet1.GetRow(mixRow).GetCell(colIndex).SetCellValue(double.Parse(ml.Mix) / 100);
-
-                                //sheet1.GetRow(CRow).CreateCell(colIndex).SetCellValue("");
-                                //sheet1.GetRow(CRow).GetCell(colIndex).CellStyle = titleStyle;
-                                ////sheet1.GetRow(CRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
-
-                                //sheet1.GetRow(noteRow).CreateCell(colIndex).SetCellValue("QPU");
-                                //sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
-                                ////sheet1.GetRow(noteRow).CreateCell(colIndex + 1).CellStyle = style1;
-
-                                //string colNm1 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
-                                ////string colNm2 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex + 1);
-
-                                //colIndex = colIndex + 1;
+                      
 
                             }
 
 
-                            //sheet1.AddMergedRegion(new CellRangeAddress(MYRow, MYRow, yearStart, colIndex - 1));
-                            //sheet1.GetRow(MYRow).CreateCell(yearStart).SetCellValue(my.Year);
-                            //sheet1.GetRow(MYRow).GetCell(yearStart).CellStyle = titleStyle;
-                            //for (int x = yearStart + 1; x < colIndex; x++)
-                            //{
-                            //    sheet1.GetRow(MYRow).CreateCell(x);
-                            //    sheet1.GetRow(MYRow).GetCell(x).CellStyle = titleStyle;
-                            //}
-
-                            //yearStart = colIndex;
-
                         }
-                        //sheet1.AddMergedRegion(new CellRangeAddress(CGRow, CGRow, countryStart, yearStart - 1));
-                        //sheet1.GetRow(CGRow).CreateCell(countryStart).SetCellValue("出口综合版");
-                        //sheet1.GetRow(CGRow).GetCell(countryStart).CellStyle = titleStyle;
-                        //for (int y = countryStart + 1; y < yearStart; y++)
-                        //{
-                        //    sheet1.GetRow(CGRow).CreateCell(y);
-                        //    sheet1.GetRow(CGRow).GetCell(y).CellStyle = titleStyle;
-                        //}
-
-                        //               countryStart = yearStart;
+                        
                         countryStart = colIndex;
 
                         //========以下是出口正常输出的部分
@@ -982,35 +935,37 @@ namespace sgm_aras_plugin
                                 for (int n = 0; n < modelline.Count; n++)
                                 {
                                     ModelLine ml = modelline[n];
+                                    int colWidth = sheet1.GetColumnWidth(colIndex);
+                                    sheet1.SetColumnWidth(colIndex, colWidth * 2);
 
-                                    sheet1.AddMergedRegion(new CellRangeAddress(UMDRow, UMDRow, colIndex, colIndex + 1));
+                                    //sheet1.AddMergedRegion(new CellRangeAddress(UMDRow, UMDRow, colIndex, colIndex + 1));
                                     sheet1.GetRow(UMDRow).CreateCell(colIndex).SetCellValue(ml.UMD);
                                     sheet1.GetRow(UMDRow).GetCell(colIndex).CellStyle = titleStyle;
-                                    sheet1.GetRow(UMDRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+                                    //sheet1.GetRow(UMDRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
 
-                                    sheet1.AddMergedRegion(new CellRangeAddress(PRow, PRow, colIndex, colIndex + 1));
+                                    //sheet1.AddMergedRegion(new CellRangeAddress(PRow, PRow, colIndex, colIndex + 1));
                                     sheet1.GetRow(PRow).CreateCell(colIndex).SetCellValue(ml.Package);
                                     sheet1.GetRow(PRow).GetCell(colIndex).CellStyle = titleStyle;
-                                    sheet1.GetRow(PRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+                                    //sheet1.GetRow(PRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
 
 
-                                    sheet1.AddMergedRegion(new CellRangeAddress(mixRow, mixRow, colIndex, colIndex + 1));
+                                    //sheet1.AddMergedRegion(new CellRangeAddress(mixRow, mixRow, colIndex, colIndex + 1));
                                     sheet1.GetRow(mixRow).CreateCell(colIndex).CellStyle = mStyle;
-                                    sheet1.GetRow(mixRow).CreateCell(colIndex + 1).CellStyle = mStyle;
+                                    //sheet1.GetRow(mixRow).CreateCell(colIndex + 1).CellStyle = mStyle;
                                     sheet1.GetRow(mixRow).GetCell(colIndex).SetCellValue(double.Parse(ml.Mix) / 100);
 
 
-                                    sheet1.AddMergedRegion(new CellRangeAddress(CRow, CRow, colIndex, colIndex + 1));
+                                    //sheet1.AddMergedRegion(new CellRangeAddress(CRow, CRow, colIndex, colIndex + 1));
                                     sheet1.GetRow(CRow).CreateCell(colIndex).SetCellValue("");
                                     sheet1.GetRow(CRow).GetCell(colIndex).CellStyle = titleStyle;
-                                    sheet1.GetRow(CRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+                                    //sheet1.GetRow(CRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
 
-                                    sheet1.GetRow(noteRow).CreateCell(colIndex).SetCellValue("mix");
+                                    sheet1.GetRow(noteRow).CreateCell(colIndex).SetCellValue("QPU");
                                     mixCols.Add(colIndex);
                                     sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
-                                    sheet1.GetRow(noteRow).CreateCell(colIndex + 1).SetCellValue("QPU");
-                                    QPUCols.Add(colIndex + 1);
-                                    sheet1.GetRow(noteRow).GetCell(colIndex + 1).CellStyle = style1;
+                                    //sheet1.GetRow(noteRow).CreateCell(colIndex + 1).SetCellValue("QPU");
+                                    //QPUCols.Add(colIndex + 1);
+                                    //sheet1.GetRow(noteRow).GetCell(colIndex + 1).CellStyle = style1;
 
                                     string colNm1 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
                                     string colNm2 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex + 1);
@@ -1033,7 +988,7 @@ namespace sgm_aras_plugin
                                     stretchFn = stretchFn + ml.StretchPackageLCR + "*" + colNm1 + "{0}*" + colNm2 + "{0}+";
 
 
-                                    colIndex = colIndex + 2;
+                                    colIndex = colIndex + 1;
 
                                 }
                                 fn = fn.Substring(0, fn.Length - 1);
