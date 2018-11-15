@@ -623,8 +623,6 @@ namespace sgm_aras_plugin
                     }
                 }
               
-
-
                 sheet1.AddMergedRegion(new CellRangeAddress(mixRow, mixRow, myColIndex, colIndex - 1));
                 sheet1.GetRow(mixRow).CreateCell(myColIndex).SetCellValue("LCR");
                 sheet1.GetRow(mixRow).GetCell(myColIndex).CellStyle = titleStyle;
@@ -638,10 +636,10 @@ namespace sgm_aras_plugin
                 {
                     for (int d = startColIndex; d < colIndex; d++)
                     {
-                    //    if (c == inputRow - 1 && d > myColIndex)
-                       if ( d > myColIndex)
+
+                        if ( d > myColIndex)
                        {
-                            sheet1.GetRow(c).GetCell(d).CellStyle = lcrStyle; ;
+                            sheet1.GetRow(c).GetCell(d).CellStyle = lcrStyle;
                         }
                         else if (d == myColIndex)
                         {
@@ -1188,8 +1186,11 @@ namespace sgm_aras_plugin
                     colIndex = colIndex + 1;
                 }
 
+               
+
                 if (is_stretch(b1Content))
                 {
+
                     for (int b = 0; b < newYearLCR.Count; b++)
                     {
                         sheet1.GetRow(CRow).CreateCell(colIndex).SetCellValue(newYearLCR[b].Year + "\n" + "stretch");

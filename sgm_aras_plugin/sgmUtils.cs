@@ -9,6 +9,6 @@ namespace sgm_aras_plugin
 {
     class sgmUtils
     {
-
+        string test;
     }
 }
