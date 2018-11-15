@@ -21,7 +21,7 @@ namespace sgm_aras_plugin
             aml += "<Item type='List' action='get'>";
             aml += "    <name>{0}</name>";
             aml += "	<Relationships>";
-            aml += "		<Item type='Value' select='label,value'>";
+            aml += "		<Item type='Value' select='lable,value'>";
             aml += "		</Item>";
             aml += "	</Relationships>";
             aml += "</Item>";
