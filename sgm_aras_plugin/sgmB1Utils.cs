@@ -22,29 +22,30 @@ namespace sgm_aras_plugin
 
         public string getEndRow(Innovator inn)
         {
-            string endRow="";
+            string endRow = "";
             Item variableItem = inn.newItem("Variable", "get");
-            variableItem.setAttribute("select","value,name");
+            variableItem.setAttribute("select", "value,name");
             variableItem.setProperty("name", "sgm_B1EndRow");
             variableItem = variableItem.apply();
 
-      
+
             if (variableItem.isError())
             {
                 endRow = variableItem.getItemByIndex(0).getProperty("value");
-            }else
+            }
+            else
             {
                 endRow = "300";
             }
 
             return endRow;
         }
-        public List<YearLCR> yearLCR =new List<YearLCR>();
-        public static List<ModelLine> getAllModelLine(Innovator inn,Item modelyear,string is_stretch)
+        public List<YearLCR> yearLCR = new List<YearLCR>();
+        public static List<ModelLine> getAllModelLine(Innovator inn, Item modelyear, string is_stretch)
         {
             List<ModelLine> modelline = new List<ModelLine>();
             string aml = "<Item type='ModelYear' action='get' select='year,lcr,stretch_lcr'>";
-            aml +="     <id>"+modelyear.getID()+"</id>";
+            aml += "     <id>" + modelyear.getID() + "</id>";
             aml += "	<Relationships>";
             aml += "		<Item type='Year Model' select='related_id,sort_order,id,mix,package_lcr,stretch_package_lcr,comments'>";
             aml += "			<related_id>";
@@ -60,16 +61,16 @@ namespace sgm_aras_plugin
             if (results.getItemCount() > 0)
             {
                 Item result = results.getItemByIndex(0);
-                Item ym= result.getItemsByXPath("Relationships/Item[@type ='Year Model']");
-              //  Item ml= result.getItemsByXPath("Relationships/Item[@type ='Year Model']/related_id/Item[@type='ModelLine']");
+                Item ym = result.getItemsByXPath("Relationships/Item[@type ='Year Model']");
+                //  Item ml= result.getItemsByXPath("Relationships/Item[@type ='Year Model']/related_id/Item[@type='ModelLine']");
 
                 for (int i = 0; i < ym.getItemCount(); i++)
                 {
                     ModelLine m = new ModelLine();
                     m.Comments = ym.getItemByIndex(i).getProperty("comments");
-                    m.PackageLCR= ym.getItemByIndex(i).getProperty("package_lcr");
-                    m.Mix= ym.getItemByIndex(i).getProperty("mix");
-                    m.StretchPackageLCR= ym.getItemByIndex(i).getProperty("stretch_package_lcr");
+                    m.PackageLCR = ym.getItemByIndex(i).getProperty("package_lcr");
+                    m.Mix = ym.getItemByIndex(i).getProperty("mix");
+                    m.StretchPackageLCR = ym.getItemByIndex(i).getProperty("stretch_package_lcr");
                     Item mls = ym.getItemByIndex(i).getItemsByXPath("related_id/Item[@type='ModelLine']");
                     Item ml = mls.getItemByIndex(0);
                     m.UMD = ml.getProperty("umd");
@@ -79,10 +80,10 @@ namespace sgm_aras_plugin
 
                 }
             }
-              return modelline;
+            return modelline;
         }
 
-        public static List<ModelYear> getAllModelYear(Innovator inn, Item country,string is_stretch)
+        public static List<ModelYear> getAllModelYear(Innovator inn, Item country, string is_stretch)
         {
             List<ModelYear> modelyear = new List<ModelYear>();
             string aml = "<Item type='Location' action='get' select='id,name'>";
@@ -103,27 +104,27 @@ namespace sgm_aras_plugin
             {
                 Item result = results.getItemByIndex(0);
                 Item my = result.getItemsByXPath("Relationships/Item[@type ='Location Year']/related_id/Item[@type='ModelYear']");
-                for (int i=0;i<my.getItemCount();i++)
+                for (int i = 0; i < my.getItemCount(); i++)
                 {
                     ModelYear m = new ModelYear();
                     m.LCR = my.getItemByIndex(i).getProperty("lcr");
-                    m.Year= my.getItemByIndex(i).getProperty("year");
-                    m.StretchLCR = my.getItemByIndex(i).getProperty("stretch_lcr")??"0";
-                    List<ModelLine> ml = getAllModelLine(inn,my.getItemByIndex(i),is_stretch);
+                    m.Year = my.getItemByIndex(i).getProperty("year");
+                    m.StretchLCR = my.getItemByIndex(i).getProperty("stretch_lcr") ?? "0";
+                    List<ModelLine> ml = getAllModelLine(inn, my.getItemByIndex(i), is_stretch);
                     m.ModelLine = ml;
                     modelyear.Add(m);
                 }
 
             }
 
-                return modelyear;
+            return modelyear;
         }
-        public static List<CountryGroup> getAllCountryGroup(Innovator inn,Item B1,string is_stretch)
+        public static List<CountryGroup> getAllCountryGroup(Innovator inn, Item B1, string is_stretch)
         {
             List<CountryGroup> countryGroup = new List<CountryGroup>();
             //string aml = "";
             string aml = "<Item type='B1Template' action='get' select='id,program_code'>";
-            aml +="     <id>" + B1.getID()+ "</id>";
+            aml += "     <id>" + B1.getID() + "</id>";
             aml += "    <Relationships>";
             aml += "        <Item type='B1 Location' action='get' initial_action='GetItemConfig' select='related_id,sort_order'>";
             aml += "            <related_id>";
@@ -146,26 +147,26 @@ namespace sgm_aras_plugin
                 {
                     CountryGroup cg = new CountryGroup();
                     cg.Country = Locations.getItemByIndex(i).getProperty("name");
-                    
-                    List<ModelYear> my = getAllModelYear(inn, Locations.getItemByIndex(i),is_stretch);
+
+                    List<ModelYear> my = getAllModelYear(inn, Locations.getItemByIndex(i), is_stretch);
                     cg.ModelYear = my;
                     countryGroup.Add(cg);
                 }
             }
             return countryGroup;
         }
-        public static List<B1Content>  getAllB1Content(Innovator inn,string cartID)
+        public static List<B1Content> getAllB1Content(Innovator inn, string cartID)
         {
-            List<B1Content> b1= new List<B1Content>();
+            List<B1Content> b1 = new List<B1Content>();
 
             string aml = "<Item type='B1TemplateCart' action='get' select='id,source_id,related_id'> ";
-            aml += "    <id>"+ cartID + "</id>";
+            aml += "    <id>" + cartID + "</id>";
             aml += "    <Relationships>";
             aml += "         <Item type='B1 Template Cart' select='related_id'>";
             aml += "            <related_id>";
             aml += "                <Item type='B1Template' action='get' select='id,program_code,is_stretch '>";
             aml += "                </Item>";
-            aml += "            </related_id>";            
+            aml += "            </related_id>";
             aml += "          </Item>";
             aml += "    </Relationships>";
             aml += "</Item>";
@@ -179,33 +180,33 @@ namespace sgm_aras_plugin
                 Item result = results.getItemByIndex(0);
                 Item b1Template = result.getItemsByXPath("Relationships/Item[@type ='B1 Template Cart']/related_id /Item[@type ='B1Template']");
 
-                for (int i = 0; i< b1Template.getItemCount(); i++)
+                for (int i = 0; i < b1Template.getItemCount(); i++)
                 {
                     B1Content b1Content = new B1Content();
                     b1Content.Programe = b1Template.getItemByIndex(i).getProperty("program_code");
-                    b1Content.Is_Stretch= b1Template.getItemByIndex(i).getProperty("is_stretch");
+                    b1Content.Is_Stretch = b1Template.getItemByIndex(i).getProperty("is_stretch");
                     List<CountryGroup> countrygroup = getAllCountryGroup(inn, b1Template.getItemByIndex(i), b1Template.getItemByIndex(i).getProperty("is_stretch"));
                     b1Content.CountryGroup = countrygroup;
                     b1.Add(b1Content);
 
                 }
-            
+
             }
 
 
             return b1;
         }
 
-        public static List<ModelYear> 
+        public static List<ModelYear>
             getAllExportModelYear(B1Content b1Content)
         {
             List<ModelYear> modelyear = new List<ModelYear>();
             List<ModelYear> tempMY = new List<ModelYear>();
 
-            for (int i=0;i<b1Content.CountryGroup.Count;i++)
+            for (int i = 0; i < b1Content.CountryGroup.Count; i++)
             {
                 CountryGroup cg = b1Content.CountryGroup[i];
-                if (cg.Country!="China")  //不为china的才加入出口综合
+                if (cg.Country != "China")  //不为china的才加入出口综合
                 {
                     for (int j = 0; j < cg.ModelYear.Count; j++)
                     {
@@ -232,9 +233,9 @@ namespace sgm_aras_plugin
                 for (int n = 0; n < thisModelYear.Count; n++)
                 {
                     ModelYear thisMY = thisModelYear[n];
-                    tempML=tempML.Concat(thisMY.ModelLine).ToList<ModelLine>();
+                    tempML = tempML.Concat(thisMY.ModelLine).ToList<ModelLine>();
                     lcr = lcr + double.Parse(thisMY.LCR);
-                    stretchLCR= stretchLCR+ double.Parse(thisMY.StretchLCR);
+                    stretchLCR = stretchLCR + double.Parse(thisMY.StretchLCR);
 
                 }
                 nMY.LCR = lcr.ToString();
@@ -246,37 +247,37 @@ namespace sgm_aras_plugin
                 List<ModelLine> tempML3 = new List<ModelLine>();
 
                 decimal sumMix = 0;
-                for (int x=0;x<packagelist.Count;x++)
+                for (int x = 0; x < packagelist.Count; x++)
                 {
                     string package = packagelist[x];
                     ModelLine ml = tempML.Find(s => s.Package == package);
                     string umd = ml.UMD;
-                    List<ModelLine> tempML2 = tempML.FindAll(s =>s.Package==package);
+                    List<ModelLine> tempML2 = tempML.FindAll(s => s.Package == package);
                     double pLCR = 0;
                     double spLCR = 0;
-                    for (int y=0;y<tempML2.Count;y++)
+                    for (int y = 0; y < tempML2.Count; y++)
                     {
                         pLCR = pLCR + double.Parse(tempML2[y].PackageLCR);
                         spLCR = spLCR + double.Parse(tempML2[y].StretchPackageLCR);
                     }
                     ModelLine nML = new ModelLine();
                     decimal mix = 0;
-                    if (x== packagelist.Count-1)
+                    if (x == packagelist.Count - 1)
                     {
-                      
+
                         mix = 1 - sumMix;
-                                          
+
                     }
                     else
                     {
                         mix = decimal.Parse(Math.Round(pLCR / lcr, 2).ToString());
-                       sumMix = sumMix + mix;
+                        sumMix = sumMix + mix;
                     }
 
 
                     nML.UMD = umd;
                     nML.Package = package;
-                    mix = mix*100;
+                    mix = mix * 100;
                     nML.Mix = mix.ToString();
                     nML.PackageLCR = pLCR.ToString();
                     nML.StretchPackageLCR = spLCR.ToString();
@@ -292,7 +293,7 @@ namespace sgm_aras_plugin
             return modelyear;
         }
 
-        public  string AppendixB1Excel(Innovator inn,string cartId,string templatefolder,string templatefile)
+        public string AppendixB1Excel(Innovator inn, string cartId, string templatefolder, string templatefile)
         {
             //创建工作簿对象
             HSSFWorkbook hssfworkbook;
@@ -309,17 +310,17 @@ namespace sgm_aras_plugin
 
             List<B1Content> b1Content = new List<B1Content>();
             b1Content = getAllB1Content(inn, cartId);
-           string pgCollection = "";
-            if (b1Content.Count>0)
+            string pgCollection = "";
+            if (b1Content.Count > 0)
             {
                 for (int i = 0; i < b1Content.Count; i++)
                 {
-                    pgCollection = pgCollection + "_"+b1Content[i].Programe;
+                    pgCollection = pgCollection + "_" + b1Content[i].Programe;
                 }
             }
-              string tradeTime = DateTime.Now.ToString("yyyyMMddHHmmss", DateTimeFormatInfo.InvariantInfo);
+            string tradeTime = DateTime.Now.ToString("yyyyMMddHHmmss", DateTimeFormatInfo.InvariantInfo);
 
-            string fpath = templatefolder + "AppendixB1-"+ pgCollection+"-" + tradeTime + ".xls";
+            string fpath = templatefolder + "AppendixB1-" + pgCollection + "-" + tradeTime + ".xls";
 
             FileStream outfile = new FileStream(fpath, FileMode.Create);
             hssfworkbook.Write(outfile);
@@ -332,7 +333,7 @@ namespace sgm_aras_plugin
 
         }
 
-       public int ExportCount(B1Content b1content)
+        public int ExportCount(B1Content b1content)
         {
             List<CountryGroup> cg = b1content.CountryGroup;
 
@@ -343,14 +344,14 @@ namespace sgm_aras_plugin
             return export.Count;
         }
 
-       bool is_export(List<B1Content> b1content)
+        bool is_export(List<B1Content> b1content)
         {
             bool f = false;
-            for(int i = 0; i < b1content.Count; i++)
+            for (int i = 0; i < b1content.Count; i++)
             {
-                
+
                 int exportcount = ExportCount(b1content[i]);
-                if (exportcount >2)
+                if (exportcount > 2)
                 {
                     f = f | true;
                 }
@@ -359,7 +360,7 @@ namespace sgm_aras_plugin
 
             return f;
         }
-        public void OutPutXLS(HSSFWorkbook hssfworkbook,Innovator inn,string cartID)
+        public void OutPutXLS(HSSFWorkbook hssfworkbook, Innovator inn, string cartID)
         {
             sgm_EndRow = getEndRow(inn);
 
@@ -371,9 +372,9 @@ namespace sgm_aras_plugin
             }
             else
             {
-                OutPutXLSLocal(hssfworkbook,b1Content);
+                OutPutXLSLocal(hssfworkbook, b1Content);
             }
-          
+
 
         }
 
@@ -383,13 +384,13 @@ namespace sgm_aras_plugin
             sheet1 = hssfworkbook.GetSheet("B1 Form");
 
             int startColIndex = 4;
-            
-            
+
+
             string v1 = sheet1.GetRow(0).GetCell(5).ToString();
             string v2 = sheet1.GetRow(0).GetCell(6).ToString();
             if (v1.Trim() != "")
             {
-                startColIndex = int.Parse(v1)-1;
+                startColIndex = int.Parse(v1) - 1;
             }
 
             int colIndex = startColIndex;
@@ -409,9 +410,9 @@ namespace sgm_aras_plugin
 
             if (v3.Length == 9)
             {
-                PGRow = int.Parse(v3[0]) - 1 ;
+                PGRow = int.Parse(v3[0]) - 1;
                 CGRow = int.Parse(v3[1]) - 1;
-                MYRow = int.Parse(v3[2]) - 1; 
+                MYRow = int.Parse(v3[2]) - 1;
                 UMDRow = int.Parse(v3[3]) - 1;
                 PRow = int.Parse(v3[4]) - 1;
                 mixRow = int.Parse(v3[5]) - 1;
@@ -445,58 +446,58 @@ namespace sgm_aras_plugin
                 {
                     B1Content b1 = b1Content[i];
                     List<CountryGroup> countrygroup = b1.CountryGroup;
-                    for(int j = 0; j < countrygroup.Count; j++)
+                    for (int j = 0; j < countrygroup.Count; j++)
                     {
                         CountryGroup cg = countrygroup[j];
                         List<ModelYear> modelyear = cg.ModelYear;
-                        for(int m = 0;m < modelyear.Count;m++)
+                        for (int m = 0; m < modelyear.Count; m++)
                         {
                             ModelYear my = modelyear[m];
                             List<ModelLine> modelline = my.ModelLine;
                             YearLCR yl = new YearLCR(my.Year);
                             string fn = "SUM(";
                             string stretchFn = "SUM(";
-                                                      
+
                             for (int n = 0; n < modelline.Count; n++)
                             {
                                 ModelLine ml = modelline[n];
-                                int colWidth = sheet1.GetColumnWidth(colIndex);
-                                sheet1.SetColumnWidth(colIndex, colWidth * 2);
 
-                                //sheet1.AddMergedRegion(new CellRangeAddress(UMDRow, UMDRow, colIndex, colIndex + 1));
+                                sheet1.AddMergedRegion(new CellRangeAddress(UMDRow, UMDRow, colIndex, colIndex + 1));
                                 sheet1.GetRow(UMDRow).CreateCell(colIndex).SetCellValue(ml.UMD);
                                 sheet1.GetRow(UMDRow).GetCell(colIndex).CellStyle = titleStyle;
-                                //sheet1.GetRow(UMDRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+                                sheet1.GetRow(UMDRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
 
-                                //sheet1.AddMergedRegion(new CellRangeAddress(PRow, PRow, colIndex, colIndex + 1));
+                                sheet1.AddMergedRegion(new CellRangeAddress(PRow, PRow, colIndex, colIndex + 1));
                                 sheet1.GetRow(PRow).CreateCell(colIndex).SetCellValue(ml.Package);
                                 sheet1.GetRow(PRow).GetCell(colIndex).CellStyle = titleStyle;
-                                //sheet1.GetRow(PRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+                                sheet1.GetRow(PRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
 
 
-                                //sheet1.AddMergedRegion(new CellRangeAddress(mixRow, mixRow, colIndex, colIndex + 1));
-                                sheet1.GetRow(mixRow).CreateCell(colIndex).SetCellValue(ml.Mix+"%");
+                                sheet1.AddMergedRegion(new CellRangeAddress(mixRow, mixRow, colIndex, colIndex + 1));
+                                sheet1.GetRow(mixRow).CreateCell(colIndex).SetCellValue(ml.Mix + "%");
                                 sheet1.GetRow(mixRow).GetCell(colIndex).CellStyle = titleStyle;
-                                //sheet1.GetRow(mixRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+                                sheet1.GetRow(mixRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
 
-                                //sheet1.AddMergedRegion(new CellRangeAddress(CRow, CRow, colIndex, colIndex + 1));
+                                sheet1.AddMergedRegion(new CellRangeAddress(CRow, CRow, colIndex, colIndex + 1));
                                 sheet1.GetRow(CRow).CreateCell(colIndex).SetCellValue("");
                                 sheet1.GetRow(CRow).GetCell(colIndex).CellStyle = titleStyle;
-                                //sheet1.GetRow(CRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+                                sheet1.GetRow(CRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
 
 
-                                sheet1.GetRow(noteRow).CreateCell(colIndex).SetCellValue("QPU");
+                                sheet1.GetRow(noteRow).CreateCell(colIndex).SetCellValue("mix");
                                 sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
-                                //sheet1.GetRow(noteRow).CreateCell(colIndex + 1).SetCellValue("QPU");
-                                //sheet1.GetRow(noteRow).GetCell(colIndex + 1).CellStyle = style1;
+                                sheet1.GetRow(noteRow).CreateCell(colIndex + 1).SetCellValue("QPU");
+                                sheet1.GetRow(noteRow).GetCell(colIndex + 1).CellStyle = style1;
 
                                 string colNm1 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
-                                //string colNm2 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex + 1);
+                                string colNm2 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex + 1);
 
-                                fn = fn + ml.PackageLCR + "*" + colNm1 +  "{0}+";
-                                stretchFn = stretchFn + ml.StretchPackageLCR + "*" + colNm1 +  "{0}+";
+                                //fn = fn + ml.PackageLCR + "*"+colNm1 + inputRow.ToString()+"*" + colNm2 + inputRow.ToString()+"+";
+                                //stretchFn = stretchFn+ ml.StretchPackageLCR + "*" + colNm1 + inputRow.ToString()+"*" + colNm2 + inputRow.ToString() + "+";
+                                fn = fn + ml.PackageLCR + "*" + colNm1 + "{0}*" + colNm2 + "{0}+";
+                                stretchFn = stretchFn + ml.StretchPackageLCR + "*" + colNm1 + "{0}*" + colNm2 + "{0}+";
 
-                                colIndex = colIndex + 1;
+                                colIndex = colIndex + 2;
 
                             }
                             fn = fn.Substring(0, fn.Length - 1);
@@ -508,20 +509,20 @@ namespace sgm_aras_plugin
                             yl.StretchFormula = stretchFn;
                             yearLCR.Add(yl);
 
-                            sheet1.AddMergedRegion(new CellRangeAddress(MYRow, MYRow, yearStart, colIndex-1));
+                            sheet1.AddMergedRegion(new CellRangeAddress(MYRow, MYRow, yearStart, colIndex - 1));
                             sheet1.GetRow(MYRow).CreateCell(yearStart).SetCellValue(my.Year);
                             sheet1.GetRow(MYRow).GetCell(yearStart).CellStyle = titleStyle;
-                            for (int x=yearStart+1;x< colIndex; x++)
+                            for (int x = yearStart + 1; x < colIndex; x++)
                             {
                                 sheet1.GetRow(MYRow).CreateCell(x);
                                 sheet1.GetRow(MYRow).GetCell(x).CellStyle = titleStyle;
                             }
-                            
+
                             yearStart = colIndex;
 
                         }
 
-                        
+
                         sheet1.AddMergedRegion(new CellRangeAddress(CGRow, CGRow, countryStart, yearStart - 1));
                         sheet1.GetRow(CGRow).CreateCell(countryStart).SetCellValue(cg.Country);
                         sheet1.GetRow(CGRow).GetCell(countryStart).CellStyle = titleStyle;
@@ -537,7 +538,7 @@ namespace sgm_aras_plugin
                     sheet1.AddMergedRegion(new CellRangeAddress(PGRow, PGRow, programeStart, countryStart - 1));
                     sheet1.GetRow(PGRow).CreateCell(programeStart).SetCellValue(b1.Programe);
                     sheet1.GetRow(PGRow).GetCell(programeStart).CellStyle = titleStyle;
-                    for (int z = programeStart + 1; z< countryStart; z++)
+                    for (int z = programeStart + 1; z < countryStart; z++)
                     {
                         sheet1.GetRow(PGRow).CreateCell(z);
                         sheet1.GetRow(PGRow).GetCell(z).CellStyle = titleStyle;
@@ -550,7 +551,7 @@ namespace sgm_aras_plugin
                 List<YearLCR> newYearLCR = splitList(yearLCR);
 
                 int myColIndex = colIndex;
-   
+
                 ICellStyle myStyle = sgmNPOIUtils.currentStyle("modelYear", hssfworkbook);
                 sheet1.GetRow(CRow).CreateCell(colIndex).SetCellValue("Model Year");
                 int columnWidth = sheet1.GetColumnWidth(colIndex);
@@ -560,15 +561,15 @@ namespace sgm_aras_plugin
                 sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
                 colIndex = colIndex + 1;
                 int endInputRow = int.Parse(sgm_EndRow);
-                for (int q=0;q< endInputRow-1; q++)
+                for (int q = 0; q < endInputRow - 1; q++)
                 {
-                    sgmNPOIUtils.CopyRow(sheet1, inputRow +q, inputRow-1, 1);
+                    sgmNPOIUtils.CopyRow(sheet1, inputRow + q, inputRow - 1, 1);
                 }
 
 
                 for (int a = 0; a < newYearLCR.Count; a++)
                 {
-                    sheet1.GetRow(CRow).CreateCell(colIndex).SetCellValue(newYearLCR[a].Year );
+                    sheet1.GetRow(CRow).CreateCell(colIndex).SetCellValue(newYearLCR[a].Year);
                     sheet1.SetColumnWidth(colIndex, columnWidth * 2);
                     sheet1.GetRow(CRow).GetCell(colIndex).CellStyle = titleStyle;
                     sheet1.GetRow(noteRow).CreateCell(colIndex);
@@ -585,7 +586,7 @@ namespace sgm_aras_plugin
                     }
 
 
-                    string colNm= sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
+                    string colNm = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
                     fCol = fCol + colNm + ",";
 
                     colIndex = colIndex + 1;
@@ -604,14 +605,14 @@ namespace sgm_aras_plugin
                         sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
                         //    sheet1.GetRow(inputRow - 1).CreateCell(colIndex).SetCellFormula(newYearLCR[b].StretchFormula);
 
-              //          int endInputRow = int.Parse(sgm_EndRow);
+                        //          int endInputRow = int.Parse(sgm_EndRow);
                         string xFn = newYearLCR[b].Formula;
                         xFn = "IF(AND(TRIM(A{0})=\"\",TRIM(B{0})=\"\"),\"\"," + xFn + ")";
                         for (int f = 0; f < endInputRow; f++)
                         {
                             string yFn = string.Format(xFn, inputRow + f);
                             int r = inputRow - 1 + f;
-                    //        sgmNPOIUtils.CopyRow(sheet1, r - 1, r, 1);
+                            //        sgmNPOIUtils.CopyRow(sheet1, r - 1, r, 1);
 
                             sheet1.GetRow(r).CreateCell(colIndex).SetCellFormula(yFn);
                         }
@@ -622,24 +623,26 @@ namespace sgm_aras_plugin
                         colIndex = colIndex + 1;
                     }
                 }
-              
+
+
+
                 sheet1.AddMergedRegion(new CellRangeAddress(mixRow, mixRow, myColIndex, colIndex - 1));
                 sheet1.GetRow(mixRow).CreateCell(myColIndex).SetCellValue("LCR");
                 sheet1.GetRow(mixRow).GetCell(myColIndex).CellStyle = titleStyle;
-                for (int a = myColIndex+1; a < colIndex; a++)
+                for (int a = myColIndex + 1; a < colIndex; a++)
                 {
                     sheet1.GetRow(mixRow).CreateCell(a);
                     sheet1.GetRow(mixRow).GetCell(a).CellStyle = titleStyle;
                 }
 
-                for (int c = inputRow - 1; c < inputRow - 1+ endInputRow; c++)
+                for (int c = inputRow - 1; c < inputRow - 1 + endInputRow; c++)
                 {
                     for (int d = startColIndex; d < colIndex; d++)
                     {
-
-                        if ( d > myColIndex)
-                       {
-                            sheet1.GetRow(c).GetCell(d).CellStyle = lcrStyle;
+                        //    if (c == inputRow - 1 && d > myColIndex)
+                        if (d > myColIndex)
+                        {
+                            sheet1.GetRow(c).GetCell(d).CellStyle = lcrStyle; ;
                         }
                         else if (d == myColIndex)
                         {
@@ -783,48 +786,48 @@ namespace sgm_aras_plugin
                                 for (int n = 0; n < modelline.Count; n++)
                                 {
                                     ModelLine ml = modelline[n];
-                                    int colWidth = sheet1.GetColumnWidth(colIndex);
-                                    sheet1.SetColumnWidth(colIndex, colWidth * 2);
 
-                                    //sheet1.AddMergedRegion(new CellRangeAddress(UMDRow, UMDRow, colIndex, colIndex + 1));
+                                    sheet1.AddMergedRegion(new CellRangeAddress(UMDRow, UMDRow, colIndex, colIndex + 1));
                                     sheet1.GetRow(UMDRow).CreateCell(colIndex).SetCellValue(ml.UMD);
                                     sheet1.GetRow(UMDRow).GetCell(colIndex).CellStyle = titleStyle;
-                                    //sheet1.GetRow(UMDRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+                                    sheet1.GetRow(UMDRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
 
-                                    //sheet1.AddMergedRegion(new CellRangeAddress(PRow, PRow, colIndex, colIndex + 1));
+                                    sheet1.AddMergedRegion(new CellRangeAddress(PRow, PRow, colIndex, colIndex + 1));
                                     sheet1.GetRow(PRow).CreateCell(colIndex).SetCellValue(ml.Package);
                                     sheet1.GetRow(PRow).GetCell(colIndex).CellStyle = titleStyle;
-                                    //sheet1.GetRow(PRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+                                    sheet1.GetRow(PRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
 
 
-                                    //sheet1.AddMergedRegion(new CellRangeAddress(mixRow, mixRow, colIndex, colIndex + 1));
+                                    sheet1.AddMergedRegion(new CellRangeAddress(mixRow, mixRow, colIndex, colIndex + 1));
                                     sheet1.GetRow(mixRow).CreateCell(colIndex).CellStyle = mStyle;
-                                    //sheet1.GetRow(mixRow).CreateCell(colIndex + 1).CellStyle = mStyle;
+                                    sheet1.GetRow(mixRow).CreateCell(colIndex + 1).CellStyle = mStyle;
                                     sheet1.GetRow(mixRow).GetCell(colIndex).SetCellValue(double.Parse(ml.Mix) / 100);
 
 
-                                    //sheet1.AddMergedRegion(new CellRangeAddress(CRow, CRow, colIndex, colIndex + 1));
+                                    sheet1.AddMergedRegion(new CellRangeAddress(CRow, CRow, colIndex, colIndex + 1));
                                     sheet1.GetRow(CRow).CreateCell(colIndex).SetCellValue("");
                                     sheet1.GetRow(CRow).GetCell(colIndex).CellStyle = titleStyle;
-                                    //sheet1.GetRow(CRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+                                    sheet1.GetRow(CRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
 
                                     //    sheet1.AddMergedRegion(new CellRangeAddress(noteRow, noteRow, colIndex, colIndex + 1));
-                                    sheet1.GetRow(noteRow).CreateCell(colIndex).SetCellValue("QPU");
+                                    sheet1.GetRow(noteRow).CreateCell(colIndex).SetCellValue("mix");
                                     sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
                                     mixCols.Add(colIndex);
-                                    //sheet1.GetRow(noteRow).CreateCell(colIndex + 1).SetCellValue("QPU");
-                                    //sheet1.GetRow(noteRow).GetCell(colIndex + 1).CellStyle = style1;
-                                    //QPUCols.Add(colIndex + 1);
+                                    sheet1.GetRow(noteRow).CreateCell(colIndex + 1).SetCellValue("QPU");
+                                    sheet1.GetRow(noteRow).GetCell(colIndex + 1).CellStyle = style1;
+                                    QPUCols.Add(colIndex + 1);
 
                                     string colNm1 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
-                                    //string colNm2 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex + 1);
+                                    string colNm2 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex + 1);
 
- 
-                                    fn = fn + ml.PackageLCR + "*" + colNm1 + "{0}+";
-                                    stretchFn = stretchFn + ml.StretchPackageLCR + "*" + colNm1 +  "{0}+";
+                                    //     fn = fn + ml.PackageLCR + "*" + colNm1 + inputRow.ToString() + "*" + colNm2 + inputRow.ToString() + "+";
+                                    //      stretchFn = stretchFn + ml.StretchPackageLCR + "*" + colNm1 + inputRow.ToString() + "*" + colNm2 + inputRow.ToString() + "+";
+
+                                    fn = fn + ml.PackageLCR + "*" + colNm1 + "{0}*" + colNm2 + "{0}+";
+                                    stretchFn = stretchFn + ml.StretchPackageLCR + "*" + colNm1 + "{0}*" + colNm2 + "{0}+";
 
 
-                                    colIndex = colIndex + 1;
+                                    colIndex = colIndex + 2;
 
                                 }
                                 fn = fn.Substring(0, fn.Length - 1);
@@ -899,19 +902,66 @@ namespace sgm_aras_plugin
 
                                 em.UDM = ml.UMD;
                                 em.Package = ml.Package;
-                        //        em.ColIndex = colIndex;
+                                //        em.ColIndex = colIndex;
                                 em.Formula = "";
                                 em.Year = my.Year;
-                         //       exportCols.Add(colIndex);
+                                //       exportCols.Add(colIndex);
 
                                 emList.Add(em);
-                      
+
+                                //int colWidth = sheet1.GetColumnWidth(colIndex);
+                                //sheet1.SetColumnWidth(colIndex, colWidth * 2);
+
+                                //sheet1.GetRow(UMDRow).CreateCell(colIndex).SetCellValue(ml.UMD);
+                                //sheet1.GetRow(UMDRow).GetCell(colIndex).CellStyle = titleStyle;
+                                ////sheet1.GetRow(UMDRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+
+                                //sheet1.GetRow(PRow).CreateCell(colIndex).SetCellValue(ml.Package);
+                                //sheet1.GetRow(PRow).GetCell(colIndex).CellStyle = titleStyle;
+                                ////sheet1.GetRow(PRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+
+                                //sheet1.GetRow(mixRow).CreateCell(colIndex).CellStyle = mStyle;
+                                ////sheet1.GetRow(mixRow).CreateCell(colIndex + 1).CellStyle = mStyle;
+                                //sheet1.GetRow(mixRow).GetCell(colIndex).SetCellValue(double.Parse(ml.Mix) / 100);
+
+                                //sheet1.GetRow(CRow).CreateCell(colIndex).SetCellValue("");
+                                //sheet1.GetRow(CRow).GetCell(colIndex).CellStyle = titleStyle;
+                                ////sheet1.GetRow(CRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+
+                                //sheet1.GetRow(noteRow).CreateCell(colIndex).SetCellValue("QPU");
+                                //sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
+                                ////sheet1.GetRow(noteRow).CreateCell(colIndex + 1).CellStyle = style1;
+
+                                //string colNm1 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
+                                ////string colNm2 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex + 1);
+
+                                //colIndex = colIndex + 1;
 
                             }
 
 
+                            //sheet1.AddMergedRegion(new CellRangeAddress(MYRow, MYRow, yearStart, colIndex - 1));
+                            //sheet1.GetRow(MYRow).CreateCell(yearStart).SetCellValue(my.Year);
+                            //sheet1.GetRow(MYRow).GetCell(yearStart).CellStyle = titleStyle;
+                            //for (int x = yearStart + 1; x < colIndex; x++)
+                            //{
+                            //    sheet1.GetRow(MYRow).CreateCell(x);
+                            //    sheet1.GetRow(MYRow).GetCell(x).CellStyle = titleStyle;
+                            //}
+
+                            //yearStart = colIndex;
+
                         }
-                        
+                        //sheet1.AddMergedRegion(new CellRangeAddress(CGRow, CGRow, countryStart, yearStart - 1));
+                        //sheet1.GetRow(CGRow).CreateCell(countryStart).SetCellValue("出口综合版");
+                        //sheet1.GetRow(CGRow).GetCell(countryStart).CellStyle = titleStyle;
+                        //for (int y = countryStart + 1; y < yearStart; y++)
+                        //{
+                        //    sheet1.GetRow(CGRow).CreateCell(y);
+                        //    sheet1.GetRow(CGRow).GetCell(y).CellStyle = titleStyle;
+                        //}
+
+                        //               countryStart = yearStart;
                         countryStart = colIndex;
 
                         //========以下是出口正常输出的部分
@@ -933,37 +983,35 @@ namespace sgm_aras_plugin
                                 for (int n = 0; n < modelline.Count; n++)
                                 {
                                     ModelLine ml = modelline[n];
-                                    int colWidth = sheet1.GetColumnWidth(colIndex);
-                                    sheet1.SetColumnWidth(colIndex, colWidth * 2);
 
-                                    //sheet1.AddMergedRegion(new CellRangeAddress(UMDRow, UMDRow, colIndex, colIndex + 1));
+                                    sheet1.AddMergedRegion(new CellRangeAddress(UMDRow, UMDRow, colIndex, colIndex + 1));
                                     sheet1.GetRow(UMDRow).CreateCell(colIndex).SetCellValue(ml.UMD);
                                     sheet1.GetRow(UMDRow).GetCell(colIndex).CellStyle = titleStyle;
-                                    //sheet1.GetRow(UMDRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+                                    sheet1.GetRow(UMDRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
 
-                                    //sheet1.AddMergedRegion(new CellRangeAddress(PRow, PRow, colIndex, colIndex + 1));
+                                    sheet1.AddMergedRegion(new CellRangeAddress(PRow, PRow, colIndex, colIndex + 1));
                                     sheet1.GetRow(PRow).CreateCell(colIndex).SetCellValue(ml.Package);
                                     sheet1.GetRow(PRow).GetCell(colIndex).CellStyle = titleStyle;
-                                    //sheet1.GetRow(PRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+                                    sheet1.GetRow(PRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
 
 
-                                    //sheet1.AddMergedRegion(new CellRangeAddress(mixRow, mixRow, colIndex, colIndex + 1));
+                                    sheet1.AddMergedRegion(new CellRangeAddress(mixRow, mixRow, colIndex, colIndex + 1));
                                     sheet1.GetRow(mixRow).CreateCell(colIndex).CellStyle = mStyle;
-                                    //sheet1.GetRow(mixRow).CreateCell(colIndex + 1).CellStyle = mStyle;
+                                    sheet1.GetRow(mixRow).CreateCell(colIndex + 1).CellStyle = mStyle;
                                     sheet1.GetRow(mixRow).GetCell(colIndex).SetCellValue(double.Parse(ml.Mix) / 100);
 
 
-                                    //sheet1.AddMergedRegion(new CellRangeAddress(CRow, CRow, colIndex, colIndex + 1));
+                                    sheet1.AddMergedRegion(new CellRangeAddress(CRow, CRow, colIndex, colIndex + 1));
                                     sheet1.GetRow(CRow).CreateCell(colIndex).SetCellValue("");
                                     sheet1.GetRow(CRow).GetCell(colIndex).CellStyle = titleStyle;
-                                    //sheet1.GetRow(CRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
+                                    sheet1.GetRow(CRow).CreateCell(colIndex + 1).CellStyle = titleStyle;
 
-                                    sheet1.GetRow(noteRow).CreateCell(colIndex).SetCellValue("QPU");
+                                    sheet1.GetRow(noteRow).CreateCell(colIndex).SetCellValue("mix");
                                     mixCols.Add(colIndex);
                                     sheet1.GetRow(noteRow).GetCell(colIndex).CellStyle = style1;
-                                    //sheet1.GetRow(noteRow).CreateCell(colIndex + 1).SetCellValue("QPU");
-                                    //QPUCols.Add(colIndex + 1);
-                                    //sheet1.GetRow(noteRow).GetCell(colIndex + 1).CellStyle = style1;
+                                    sheet1.GetRow(noteRow).CreateCell(colIndex + 1).SetCellValue("QPU");
+                                    QPUCols.Add(colIndex + 1);
+                                    sheet1.GetRow(noteRow).GetCell(colIndex + 1).CellStyle = style1;
 
                                     string colNm1 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex);
                                     string colNm2 = sgmNPOIUtils.ConvertColumnIndexToColumnName(colIndex + 1);
@@ -980,13 +1028,13 @@ namespace sgm_aras_plugin
                                             EM.Formula = exportFn;
                                         }
                                     }
-                                 
 
-                                    fn = fn + ml.PackageLCR + "*" + colNm1 +  "{0}*" + colNm2 +  "{0}+";
+
+                                    fn = fn + ml.PackageLCR + "*" + colNm1 + "{0}*" + colNm2 + "{0}+";
                                     stretchFn = stretchFn + ml.StretchPackageLCR + "*" + colNm1 + "{0}*" + colNm2 + "{0}+";
 
 
-                                    colIndex = colIndex + 1;
+                                    colIndex = colIndex + 2;
 
                                 }
                                 fn = fn.Substring(0, fn.Length - 1);
@@ -1007,7 +1055,7 @@ namespace sgm_aras_plugin
                                     sheet1.GetRow(MYRow).GetCell(x).CellStyle = titleStyle;
                                 }
 
-                                yearStart = colIndex;   
+                                yearStart = colIndex;
 
                             }
 
@@ -1111,7 +1159,7 @@ namespace sgm_aras_plugin
                             string pLCR = ml.PackageLCR;
                             string fn = em.Formula;
                             fn = fn.Substring(0, fn.Length - 1);
-                            fn = "IF(AND(TRIM(A{0})=\"\",TRIM(B{0})=\"\"),\"\",(" + fn + ")/" + pLCR+")";
+                            fn = "IF(AND(TRIM(A{0})=\"\",TRIM(B{0})=\"\"),\"\",(" + fn + ")/" + pLCR + ")";
 
 
                             for (int f = 0; f < endInputRow; f++)
@@ -1186,11 +1234,8 @@ namespace sgm_aras_plugin
                     colIndex = colIndex + 1;
                 }
 
-               
-
                 if (is_stretch(b1Content))
                 {
-
                     for (int b = 0; b < newYearLCR.Count; b++)
                     {
                         sheet1.GetRow(CRow).CreateCell(colIndex).SetCellValue(newYearLCR[b].Year + "\n" + "stretch");
@@ -1231,12 +1276,12 @@ namespace sgm_aras_plugin
                     for (int d = startColIndex; d < colIndex; d++)
                     {
 
-                        if ( exportCols.Exists(s => s == d))
+                        if (exportCols.Exists(s => s == d))
                         {
                             sheet1.GetRow(c).GetCell(d).CellStyle = lcrStyle;
                             continue;
                         }
-                        
+
                         if (d > myColIndex)
                         {
                             sheet1.GetRow(c).GetCell(d).CellStyle = lcrStyle;
@@ -1292,10 +1337,10 @@ namespace sgm_aras_plugin
                 year = year.Replace("，", ","); //防止中文逗号
                 string[] yearArray = year.Split(',');
 
-                for (int j = 0;j < yearArray.Length; j++)
+                for (int j = 0; j < yearArray.Length; j++)
                 {
                     YearLCR newYL = new YearLCR();
-                    newYL.Year= yearArray[j];
+                    newYL.Year = yearArray[j];
                     newYL.Formula = formula;
                     newYL.StretchFormula = sFormula;
                     tempList.Add(newYL);
@@ -1306,15 +1351,15 @@ namespace sgm_aras_plugin
             List<string> yearList = tempList.Select(p => p.Year).Distinct().ToList();  //year去重
             yearList.Sort();
 
-            for (int m=0;m<yearList.Count;m++)
+            for (int m = 0; m < yearList.Count; m++)
             {
                 string year = yearList[m];
-                List<YearLCR> tempYL = tempList.FindAll(s => s.Year  == year);
+                List<YearLCR> tempYL = tempList.FindAll(s => s.Year == year);
                 YearLCR nYL = new YearLCR();
                 nYL.Year = year;
                 string f = " ";
-                string sf=" ";
-                for(int n = 0; n < tempYL.Count; n++)
+                string sf = " ";
+                for (int n = 0; n < tempYL.Count; n++)
                 {
                     f = f + "+" + tempYL[n].Formula;
                     sf = sf + "+" + tempYL[n].StretchFormula;
@@ -1334,18 +1379,18 @@ namespace sgm_aras_plugin
         public List<string> Test()
         {
             List<string> templist = yearLCR.Select(p => p.Year).Distinct().ToList();  //year去重
-             templist.Sort();
+            templist.Sort();
             return templist;
 
         }
 
-       public bool is_stretch(List<B1Content> b1content)
+        public bool is_stretch(List<B1Content> b1content)
         {
             bool f = false;
             for (int i = 0; i < b1content.Count; i++)
             {
 
-                if (b1content[i].Is_Stretch=="1")
+                if (b1content[i].Is_Stretch == "1")
                 {
                     f = f | true;
                 }

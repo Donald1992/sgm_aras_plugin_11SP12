@@ -70,8 +70,8 @@ namespace sgm_aras_plugin
                     style.BorderTop = NPOI.SS.UserModel.BorderStyle.Thin;
                     style.DataFormat = HSSFDataFormat.GetBuiltinFormat("0%");
                     style.IsLocked = false;
-                    font.FontHeightInPoints = 10;
-                    font.FontName = "Arial";
+               //     font.FontHeightInPoints = 10;
+               //     font.FontName = "Arial";
                     style.SetFont(font);
                     break;
                 case "userQPU":
@@ -79,10 +79,10 @@ namespace sgm_aras_plugin
                     style.BorderLeft = NPOI.SS.UserModel.BorderStyle.Thin;
                     style.BorderRight = NPOI.SS.UserModel.BorderStyle.Thin;
                     style.BorderTop = NPOI.SS.UserModel.BorderStyle.Thin;
-                    style.DataFormat = HSSFDataFormat.GetBuiltinFormat("0");
+                 //   style.DataFormat = HSSFDataFormat.GetBuiltinFormat("2");
                     style.IsLocked = false;
-                    font.FontHeightInPoints = 10;
-                    font.FontName = "Arial";
+               //     font.FontHeightInPoints = 10;
+              //      font.FontName = "Arial";
                     style.SetFont(font);
                     break;
                 case "modelYear":
